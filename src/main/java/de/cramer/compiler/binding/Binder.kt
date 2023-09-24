@@ -5,6 +5,7 @@ import de.cramer.compiler.Diagnostics
 import de.cramer.compiler.syntax.AssignmentExpression
 import de.cramer.compiler.syntax.BinaryExpression
 import de.cramer.compiler.syntax.CodePointString
+import de.cramer.compiler.syntax.CompilationUnit
 import de.cramer.compiler.syntax.ExpressionNode
 import de.cramer.compiler.syntax.LiteralExpression
 import de.cramer.compiler.syntax.NameExpression
@@ -13,11 +14,17 @@ import de.cramer.compiler.syntax.SyntaxType
 import de.cramer.compiler.syntax.Token
 import de.cramer.compiler.syntax.UnaryExpression
 import de.cramer.compiler.text.TextSpan
+import java.util.ArrayDeque
 
 class Binder(
-    private val variables: MutableMap<VariableSymbol, Any>,
+    parent: BoundScope?,
 ) {
+    private val scope: BoundScope
     private val diagnostics = Diagnostics()
+
+    init {
+        scope = BoundScope(parent)
+    }
 
     fun diagnostics(): List<Diagnostic> = diagnostics.toList()
 
@@ -75,7 +82,7 @@ class Binder(
 
     private fun bindNameExpression(expression: NameExpression): BoundExpression {
         val name = expression.identifier.text
-        val variable = variables.keys.find { it.name == name }
+        val variable = scope[name]
         if (variable == null) {
             diagnostics.undefinedName(expression.identifier, name)
             return BoundLiteralExpression(0, builtInTypeInt)
@@ -88,16 +95,47 @@ class Binder(
         val name = expression.identifier.text
         val boundExpression = bindExpression(expression.value)
 
-        val existingVariable = variables.keys.find { it.name == name }
-        if (existingVariable != null) {
+        val variable = VariableSymbol(name, boundExpression.type)
+        if (!scope.declare(variable)) {
+            val existingVariable = scope[name]!!
             if (existingVariable.type != boundExpression.type) {
                 diagnostics.incompatibleAssignment(expression.span, existingVariable.type, boundExpression.type)
             }
         }
-
-        val variable = VariableSymbol(name, boundExpression.type)
-        variables[variable] = Unit
         return BoundAssignmentExpression(variable, boundExpression)
+    }
+
+    companion object {
+        fun bindGlobalScope(previous: BoundGlobalScope?, compilationUnit: CompilationUnit): BoundGlobalScope {
+            val parentScope = createParentScopes(previous)
+            val binder = Binder(parentScope)
+            val expression = binder.bindExpression(compilationUnit.expression)
+            val variables = binder.scope.declaredVariables
+            val diagnostics = binder.diagnostics()
+            return BoundGlobalScope(previous, diagnostics, variables, expression)
+        }
+
+        private fun createParentScopes(previous: BoundGlobalScope?): BoundScope? {
+            var p = previous
+            val stack = ArrayDeque<BoundGlobalScope>()
+            while (p != null) {
+                stack.push(p)
+                p = p.previous
+            }
+
+            var parent: BoundScope? = null
+            while (stack.isNotEmpty()) {
+                val global = stack.pop()
+                val scope = BoundScope(parent)
+                for (variable in global.variables) {
+                    scope.declare(variable)
+                }
+
+                parent = scope
+            }
+
+            return parent
+        }
     }
 }
 

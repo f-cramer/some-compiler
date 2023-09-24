@@ -1,22 +1,27 @@
 package de.cramer.compiler
 
 import de.cramer.compiler.binding.Binder
+import de.cramer.compiler.binding.BoundGlobalScope
 import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
 
 data class Compilation(
+    private val previous: Compilation?,
     val syntaxTree: SyntaxTree,
 ) {
-    fun evaluate(variables: MutableMap<VariableSymbol, Any>): EvaluationResult {
-        val binder = Binder(variables)
-        val expression = binder.bindExpression(syntaxTree.root.expression)
+    constructor(syntaxTree: SyntaxTree) : this(null, syntaxTree)
 
-        val diagnostics = syntaxTree.diagnostics + binder.diagnostics()
+    private val globalScope: BoundGlobalScope by lazy {
+        Binder.bindGlobalScope(previous?.globalScope, syntaxTree.root)
+    }
+
+    fun evaluate(variables: MutableMap<VariableSymbol, Any>): EvaluationResult {
+        val diagnostics = syntaxTree.diagnostics + globalScope.diagnostics
         if (diagnostics.isNotEmpty()) {
             return EvaluationResult.Failure(diagnostics)
         }
 
-        val evaluator = Evaluator(expression, variables)
+        val evaluator = Evaluator(globalScope.expression, variables)
         val result = evaluator.evaluate()
         return EvaluationResult.Success(result)
     }

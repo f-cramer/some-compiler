@@ -61,9 +61,13 @@ private fun acceptInputs() {
                 syntaxTree.root.expression.writeTo(System.out)
             }
 
-            val compilation = Compilation(syntaxTree)
+            val compilation = Compilation(configuration.previousCompilation, syntaxTree)
             when (val evaluationResult = compilation.evaluate(variables)) {
-                is EvaluationResult.Success -> println(ansi().fgMagenta().a(evaluationResult.value).reset())
+                is EvaluationResult.Success -> {
+                    println(ansi().fgMagenta().a(evaluationResult.value).reset())
+                    configuration.previousCompilation = compilation
+                }
+
                 is EvaluationResult.Failure -> printDiagnostics(evaluationResult.diagnostics, syntaxTree.text)
             }
         } catch (e: Exception) {
@@ -79,6 +83,7 @@ fun runBuiltinFunction(function: String, configuration: Configuration) {
     when (function) {
         "cls", "clear" -> runBuiltinFunctionClear()
         "exit", "q", "quit" -> runBuiltinFunctionExit()
+        "reset" -> runBuiltinFunctionReset(configuration)
         "showTree" -> runBuiltinFunctionShowTree(configuration)
         else -> println(ansi().error("unknown builtin function \"$function\""))
     }
@@ -90,6 +95,11 @@ private fun runBuiltinFunctionClear() {
 
 private fun runBuiltinFunctionExit() {
     exitProcess(0)
+}
+
+fun runBuiltinFunctionReset(configuration: Configuration) {
+    configuration.previousCompilation = null
+    println("scope was reset")
 }
 
 private fun runBuiltinFunctionShowTree(configuration: Configuration) {
@@ -140,4 +150,5 @@ fun Ansi.error(error: String?): Ansi = startError().a(error).reset()
 data class Configuration(
     var showTree: Boolean = false,
     var charset: Charset = StandardCharsets.UTF_8,
+    var previousCompilation: Compilation? = null,
 )
