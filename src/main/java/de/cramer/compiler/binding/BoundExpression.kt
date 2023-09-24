@@ -15,6 +15,7 @@ enum class BoundNodeKind {
     VariableDeclarationStatement,
     IfStatement,
     WhileStatement,
+    ForStatement,
 }
 
 data class BoundLiteralExpression(

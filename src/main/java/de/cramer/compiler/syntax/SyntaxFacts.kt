@@ -49,5 +49,7 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.IfKeyword -> "if"
     SyntaxType.ElseKeyword -> "else"
     SyntaxType.WhileKeyword -> "while"
+    SyntaxType.ForKeyword -> "for"
+    SyntaxType.ToKeyword -> "to"
     else -> null
 }

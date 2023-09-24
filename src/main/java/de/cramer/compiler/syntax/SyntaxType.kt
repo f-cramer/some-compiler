@@ -35,6 +35,8 @@ enum class SyntaxType {
     IfKeyword,
     ElseKeyword,
     WhileKeyword,
+    ForKeyword,
+    ToKeyword,
 
     NameExpression,
     AssignmentExpression,
@@ -50,6 +52,7 @@ enum class SyntaxType {
     IfStatement,
     ElseClause,
     WhileStatement,
+    ForStatement,
 
     CompilationUnit,
 

@@ -12,6 +12,7 @@ import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
 import de.cramer.compiler.syntax.statement.ElseClause
 import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.ForStatement
 import de.cramer.compiler.syntax.statement.IfStatement
 import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
@@ -67,6 +68,7 @@ class Parser private constructor(
             SyntaxType.VarKeyword, SyntaxType.ValKeyword -> parseVariableDeclarationStatement()
             SyntaxType.IfKeyword -> parseIfStatement()
             SyntaxType.WhileKeyword -> parseWhileStatement()
+            SyntaxType.ForKeyword -> parseForStatement()
             else -> parseExpressionStatement()
         }
     }
@@ -111,6 +113,17 @@ class Parser private constructor(
         val condition = parseExpression()
         val body = parseStatement()
         return WhileStatement(keyword, condition, body)
+    }
+
+    private fun parseForStatement(): ForStatement {
+        val keyword = matchToken(SyntaxType.ForKeyword)
+        val variable = matchToken(SyntaxType.IdentifierToken)
+        val equalsToken = matchToken(SyntaxType.EqualsToken)
+        val lowerBound = parseExpression()
+        val toToken = matchToken(SyntaxType.ToKeyword)
+        val upperBound = parseExpression()
+        val body = parseStatement()
+        return ForStatement(keyword, variable, equalsToken, lowerBound, toToken, upperBound, body)
     }
 
     private fun parseExpressionStatement(): ExpressionStatement {

@@ -15,6 +15,7 @@ import de.cramer.compiler.syntax.expression.ParenthesizedExpression
 import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
 import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.ForStatement
 import de.cramer.compiler.syntax.statement.IfStatement
 import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
@@ -42,11 +43,12 @@ class Binder(
             is VariableDeclarationStatement -> bindVariableDeclarationStatement(statement)
             is IfStatement -> bindIfStatement(statement)
             is WhileStatement -> bindWhileStatement(statement)
+            is ForStatement -> bindForStatement(statement)
         }
     }
 
     private fun bindBlockStatement(statement: BlockStatement): BoundBlockStatement {
-        val blockBinder = Binder(scope, diagnostics)
+        val blockBinder = createSubBinder()
         val statements = statement.statements.map { blockBinder.bindStatement(it) }
         return BoundBlockStatement(statements)
     }
@@ -80,6 +82,21 @@ class Binder(
         val condition = bindExpression(statement.condition, builtInTypeBoolean)
         val body = bindStatement(statement.body)
         return BoundWhileStatement(condition, body)
+    }
+
+    private fun bindForStatement(statement: ForStatement): BoundForStatement {
+        val lowerBound = bindExpression(statement.lowerBound, builtInTypeInt)
+        val upperBound = bindExpression(statement.upperBound, builtInTypeInt)
+
+        val bodyBinder = createSubBinder()
+        val name = statement.variable.text
+        val variable = VariableSymbol(name, true, builtInTypeInt)
+        if (!bodyBinder.scope.declare(variable)) {
+            diagnostics.variableAlreadyDeclared(statement.variable.span, name)
+        }
+
+        val body = bodyBinder.bindStatement(statement.body)
+        return BoundForStatement(variable, lowerBound, upperBound, body)
     }
 
     private fun bindExpression(expression: ExpressionNode, targetType: Type): BoundExpression {
@@ -171,6 +188,8 @@ class Binder(
         }
         return BoundAssignmentExpression(variable, boundExpression)
     }
+
+    private fun createSubBinder() = Binder(scope, diagnostics)
 
     companion object {
         fun bindGlobalScope(previous: BoundGlobalScope?, compilationUnit: CompilationUnit): BoundGlobalScope {

@@ -5,6 +5,7 @@ import de.cramer.compiler.binding.BoundBinaryExpression
 import de.cramer.compiler.binding.BoundBlockStatement
 import de.cramer.compiler.binding.BoundExpression
 import de.cramer.compiler.binding.BoundExpressionStatement
+import de.cramer.compiler.binding.BoundForStatement
 import de.cramer.compiler.binding.BoundIfStatement
 import de.cramer.compiler.binding.BoundLiteralExpression
 import de.cramer.compiler.binding.BoundStatement
@@ -49,6 +50,7 @@ class Evaluator(
             is BoundVariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement)
             is BoundIfStatement -> evaluateIfStatement(statement)
             is BoundWhileStatement -> evaluateWhileStatement(statement)
+            is BoundForStatement -> evaluateForStatement(statement)
         }
     }
 
@@ -79,6 +81,15 @@ class Evaluator(
 
     private fun evaluateWhileStatement(statement: BoundWhileStatement) {
         while (evaluateExpression(statement.condition) as Boolean) {
+            evaluateStatement(statement.body)
+        }
+    }
+
+    private fun evaluateForStatement(statement: BoundForStatement) {
+        val lowerBound = evaluateExpression(statement.lowerBound) as Int
+        val upperBound = evaluateExpression(statement.upperBound) as Int
+        for (i in lowerBound..upperBound) {
+            variables[statement.variable] = i
             evaluateStatement(statement.body)
         }
     }

@@ -156,6 +156,40 @@ class EvaluationTests {
         assertThat(text).hasDiagnostics(diagnostics)
     }
 
+    @Test
+    fun `for-statement reports invalid assignment for lower bound`() {
+        val text = """
+            {
+                var x = 0
+                for i = [false] to 10
+                    x = x + i
+            }
+        """
+
+        val diagnostics = """
+            expected expression of type 'int' but got 'boolean'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `for-statement reports invalid assignment for upper bound`() {
+        val text = """
+            {
+                var x = 0
+                for i = 0 to [false]
+                    x = x + i
+            }
+        """
+
+        val diagnostics = """
+            expected expression of type 'int' but got 'boolean'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
     private fun Assert<String>.hasDiagnostics(diagnosticTexts: String) {
         hasDiagnostics(diagnosticTexts.trimIndent().lines())
     }
@@ -216,6 +250,7 @@ class EvaluationTests {
             Arguments.of("{ var a = 0 if a == 0 a = 1 else a = 2 a }", 1),
             Arguments.of("{ var a = 0 if a != 0 a = 1 else a = 2 a }", 2),
             Arguments.of("{ var i = 10 var result = 0 while i > 0 { result = result + i i = i - 1 } result }", 55),
+            Arguments.of("{ var result = 0 for i = 0 to 10 result = result + i result }", 55),
         )
     }
 }

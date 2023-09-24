@@ -35,3 +35,12 @@ data class BoundWhileStatement(
 ) : BoundStatement {
     override val kind = BoundNodeKind.WhileStatement
 }
+
+data class BoundForStatement(
+    val variable: VariableSymbol,
+    val lowerBound: BoundExpression,
+    val upperBound: BoundExpression,
+    val body: BoundStatement,
+) : BoundStatement {
+    override val kind = BoundNodeKind.ForStatement
+}
