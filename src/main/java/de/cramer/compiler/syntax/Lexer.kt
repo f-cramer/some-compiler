@@ -11,7 +11,7 @@ class Lexer(
     private var index = 0
     private val diagnostics = Diagnostics()
 
-    fun diagnostics(): List<Diagnostic> = diagnostics
+    fun diagnostics(): List<Diagnostic> = diagnostics.toList()
 
     fun lex(): List<Token> = buildList {
         while (index < text.length) {

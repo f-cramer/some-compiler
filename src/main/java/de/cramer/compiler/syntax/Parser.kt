@@ -15,7 +15,7 @@ class Parser private constructor(
     private val current: Token
         get() = peek(0)
 
-    fun diagnostics(): List<Diagnostic> = diagnostics
+    fun diagnostics(): List<Diagnostic> = diagnostics.toList()
 
     private fun peek(offset: Int): Token {
         val index = this.index + offset

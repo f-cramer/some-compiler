@@ -18,7 +18,7 @@ class Binder(
 ) {
     private val diagnostics = Diagnostics()
 
-    fun diagnostics(): List<Diagnostic> = diagnostics
+    fun diagnostics(): List<Diagnostic> = diagnostics.toList()
 
     fun bindExpression(expression: ExpressionNode): BoundExpression {
         return when (expression) {
