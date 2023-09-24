@@ -10,6 +10,8 @@ enum class BoundNodeKind {
     BinaryExpression,
     VariableExpression,
     AssignmentExpression,
+    BlockStatement,
+    ExpressionStatement,
 }
 
 data class BoundLiteralExpression(

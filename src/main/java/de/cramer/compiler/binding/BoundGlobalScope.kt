@@ -6,5 +6,5 @@ class BoundGlobalScope(
     val previous: BoundGlobalScope?,
     val diagnostics: List<Diagnostic>,
     val variables: Collection<VariableSymbol>,
-    val expression: BoundExpression,
+    val statement: BoundStatement,
 )

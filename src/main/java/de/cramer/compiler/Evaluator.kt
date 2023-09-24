@@ -2,8 +2,11 @@ package de.cramer.compiler
 
 import de.cramer.compiler.binding.BoundAssignmentExpression
 import de.cramer.compiler.binding.BoundBinaryExpression
+import de.cramer.compiler.binding.BoundBlockStatement
 import de.cramer.compiler.binding.BoundExpression
+import de.cramer.compiler.binding.BoundExpressionStatement
 import de.cramer.compiler.binding.BoundLiteralExpression
+import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.binding.BoundUnaryExpression
 import de.cramer.compiler.binding.BoundVariableExpression
 import de.cramer.compiler.binding.VariableSymbol
@@ -22,11 +25,31 @@ import de.cramer.compiler.binding.unaryOperatorLogicalNegationBoolean
 import de.cramer.compiler.binding.unaryOperatorNegationInt
 
 class Evaluator(
-    private val root: BoundExpression,
+    private val root: BoundStatement,
     private val variables: MutableMap<VariableSymbol, Any>,
 ) {
-    fun evaluate(): Any {
-        return evaluateExpression(root)
+    private var lastValue: Any? = null
+
+    fun evaluate(): Any? {
+        evaluateStatement(root)
+        return lastValue
+    }
+
+    private fun evaluateStatement(statement: BoundStatement) {
+        when (statement) {
+            is BoundBlockStatement -> evaluateBlockStatement(statement)
+            is BoundExpressionStatement -> evaluateExpressionStatement(statement)
+        }
+    }
+
+    private fun evaluateBlockStatement(statement: BoundBlockStatement) {
+        for (s in statement.statements) {
+            evaluateStatement(s)
+        }
+    }
+
+    private fun evaluateExpressionStatement(statement: BoundExpressionStatement) {
+        lastValue = evaluateExpression(statement.expression)
     }
 
     private fun evaluateExpression(expression: BoundExpression): Any {

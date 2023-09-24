@@ -1,5 +1,7 @@
 package de.cramer.compiler.syntax
 
+import de.cramer.compiler.syntax.expression.ExpressionNode
+import de.cramer.compiler.syntax.statement.ExpressionStatement
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -15,7 +17,7 @@ class ParserTests {
         val unaryText = unary.getText()!!
         val binaryText = binary.getText()!!
         val text = "$unaryText a $binaryText b"
-        val expression = SyntaxTree.parse(text).root.expression
+        val expression = parseExpression(text)
 
         if (unaryPrecedence >= binaryPrecedence) {
             AssertingIterator(expression).use {
@@ -51,7 +53,7 @@ class ParserTests {
         val op1Text = op1.getText()!!
         val op2Text = op2.getText()!!
         val text = "a $op1Text b $op2Text c"
-        val expression = SyntaxTree.parse(text).root.expression
+        val expression = parseExpression(text)
 
         if (op1Precedence >= op2Precedence) {
             AssertingIterator(expression).use {
@@ -80,6 +82,11 @@ class ParserTests {
                 it.assertToken(SyntaxType.IdentifierToken, "c")
             }
         }
+    }
+
+    private fun parseExpression(text: String): ExpressionNode {
+        val root = SyntaxTree.parse(text).root.statement
+        return (root as ExpressionStatement).expression
     }
 
     companion object {

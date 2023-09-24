@@ -13,20 +13,42 @@ import de.cramer.compiler.syntax.expression.LiteralExpression
 import de.cramer.compiler.syntax.expression.NameExpression
 import de.cramer.compiler.syntax.expression.ParenthesizedExpression
 import de.cramer.compiler.syntax.expression.UnaryExpression
+import de.cramer.compiler.syntax.statement.BlockStatement
+import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.text.TextSpan
 import java.util.ArrayDeque
 
 class Binder(
     parent: BoundScope?,
+    diagnostics: Diagnostics? = null,
 ) {
     private val scope: BoundScope
-    private val diagnostics = Diagnostics()
+    private val diagnostics = diagnostics ?: Diagnostics()
 
     init {
         scope = BoundScope(parent)
     }
 
     fun diagnostics(): List<Diagnostic> = diagnostics.toList()
+
+    fun bindStatement(statement: StatementNode): BoundStatement {
+        return when (statement) {
+            is BlockStatement -> bindBlockStatement(statement)
+            is ExpressionStatement -> bindExpressionStatement(statement)
+        }
+    }
+
+    private fun bindBlockStatement(statement: BlockStatement): BoundBlockStatement {
+        val blockBinder = Binder(scope, diagnostics)
+        val statements = statement.statements.map { blockBinder.bindStatement(it) }
+        return BoundBlockStatement(statements)
+    }
+
+    private fun bindExpressionStatement(statement: ExpressionStatement): BoundExpressionStatement {
+        val expression = bindExpression(statement.expression)
+        return BoundExpressionStatement(expression)
+    }
 
     fun bindExpression(expression: ExpressionNode): BoundExpression {
         return when (expression) {
@@ -109,10 +131,10 @@ class Binder(
         fun bindGlobalScope(previous: BoundGlobalScope?, compilationUnit: CompilationUnit): BoundGlobalScope {
             val parentScope = createParentScopes(previous)
             val binder = Binder(parentScope)
-            val expression = binder.bindExpression(compilationUnit.expression)
+            val statement = binder.bindStatement(compilationUnit.statement)
             val variables = binder.scope.declaredVariables
             val diagnostics = binder.diagnostics()
-            return BoundGlobalScope(previous, diagnostics, variables, expression)
+            return BoundGlobalScope(previous, diagnostics, variables, statement)
         }
 
         private fun createParentScopes(previous: BoundGlobalScope?): BoundScope? {

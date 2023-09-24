@@ -1,11 +1,11 @@
 package de.cramer.compiler.syntax
 
-import de.cramer.compiler.syntax.expression.ExpressionNode
+import de.cramer.compiler.syntax.statement.StatementNode
 
 data class CompilationUnit(
-    val expression: ExpressionNode,
+    val statement: StatementNode,
     val endOfFileToken: Token,
 ) : SyntaxNode {
     override val type = SyntaxType.CompilationUnit
-    override val children = listOf(expression, endOfFileToken)
+    override val children = listOf(statement, endOfFileToken)
 }

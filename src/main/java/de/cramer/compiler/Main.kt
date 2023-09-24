@@ -58,13 +58,13 @@ private fun acceptInputs() {
             inputBuilder.clear()
 
             if (configuration.showTree) {
-                syntaxTree.root.expression.writeTo(System.out)
+                syntaxTree.root.statement.writeTo(System.out)
             }
 
             val compilation = Compilation(configuration.previousCompilation, syntaxTree)
             when (val evaluationResult = compilation.evaluate(variables)) {
                 is EvaluationResult.Success -> {
-                    println(ansi().fgMagenta().a(evaluationResult.value).reset())
+                    evaluationResult.value?.let { println(ansi().fgMagenta().a(it).reset()) }
                     configuration.previousCompilation = compilation
                 }
 

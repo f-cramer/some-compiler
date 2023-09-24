@@ -9,6 +9,9 @@ import de.cramer.compiler.syntax.expression.LiteralExpression
 import de.cramer.compiler.syntax.expression.NameExpression
 import de.cramer.compiler.syntax.expression.ParenthesizedExpression
 import de.cramer.compiler.syntax.expression.UnaryExpression
+import de.cramer.compiler.syntax.statement.BlockStatement
+import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.text.TextSpan
 
@@ -49,9 +52,33 @@ class Parser private constructor(
     }
 
     fun parse(): CompilationUnit {
-        val expression = parseExpression()
+        val statement = parseStatement()
         val endOfFileToken = matchToken(SyntaxType.EndOfFileToken)
-        return CompilationUnit(expression, endOfFileToken)
+        return CompilationUnit(statement, endOfFileToken)
+    }
+
+    private fun parseStatement(): StatementNode {
+        return when (current.type) {
+            SyntaxType.OpenBraceToken -> parseBlockStatement()
+            else -> parseExpressionStatement()
+        }
+    }
+
+    private fun parseBlockStatement(): BlockStatement {
+        val openBraceToken = matchToken(SyntaxType.OpenBraceToken)
+        val statements = buildList {
+            while (current.type != SyntaxType.CloseBraceToken && current.type != SyntaxType.EndOfFileToken) {
+                this += parseStatement()
+            }
+        }
+        val closeBraceToken = matchToken(SyntaxType.CloseBraceToken)
+
+        return BlockStatement(openBraceToken, statements, closeBraceToken)
+    }
+
+    private fun parseExpressionStatement(): ExpressionStatement {
+        val expression = parseExpression()
+        return ExpressionStatement(expression)
     }
 
     private fun parseExpression(): ExpressionNode {

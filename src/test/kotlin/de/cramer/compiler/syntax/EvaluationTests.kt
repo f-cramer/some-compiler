@@ -56,6 +56,7 @@ class EvaluationTests {
             Arguments.of("!true", false),
             Arguments.of("!false", true),
             Arguments.of("(a = 10) * a", 100),
+            Arguments.of("{ a = 0 (a = 10) * a }", 100),
         )
     }
 }

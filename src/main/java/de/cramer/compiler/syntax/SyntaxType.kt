@@ -35,6 +35,9 @@ enum class SyntaxType {
     BinaryExpression,
     ParenthesizedExpression,
 
+    BlockStatement,
+    ExpressionStatement,
+
     CompilationUnit,
 
     BadInputToken,

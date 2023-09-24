@@ -21,7 +21,7 @@ data class Compilation(
             return EvaluationResult.Failure(diagnostics)
         }
 
-        val evaluator = Evaluator(globalScope.expression, variables)
+        val evaluator = Evaluator(globalScope.statement, variables)
         val result = evaluator.evaluate()
         return EvaluationResult.Success(result)
     }
