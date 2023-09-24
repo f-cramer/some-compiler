@@ -36,26 +36,23 @@ dependencies {
     testImplementation("com.willowtreeapps.assertk:assertk:0.27.0")
 }
 
+val configureJavaToolchain = Action<JavaToolchainSpec> {
+    languageVersion = JavaLanguageVersion.of(17)
+    vendor = JvmVendorSpec.ORACLE
+}
+
 tasks.test {
     useJUnitPlatform()
 }
 
 kotlin {
-    jvmToolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-        vendor = JvmVendorSpec.ORACLE
-    }
+    jvmToolchain(configureJavaToolchain)
 }
 
 graalvmNative {
     binaries {
         named("main") {
-            javaLauncher.set(
-                javaToolchains.launcherFor {
-                    languageVersion = JavaLanguageVersion.of(17)
-                    vendor = JvmVendorSpec.ORACLE
-                },
-            )
+            javaLauncher.set(javaToolchains.launcherFor(configureJavaToolchain))
         }
     }
 }
