@@ -12,9 +12,11 @@ import de.cramer.compiler.syntax.SyntaxTree
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.utils.AnnotatedText
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.concurrent.TimeUnit
 
 class EvaluationTests {
 
@@ -183,6 +185,22 @@ class EvaluationTests {
 
         val diagnostics = """
             expected expression of type 'int' but got 'boolean'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    @Timeout(1, unit = TimeUnit.SECONDS, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+    fun `block-statement does not cause infinite loop`() {
+        val text = """
+            {
+            [)][]
+        """
+
+        val diagnostics = """
+            unexpected token <CloseParenthesisToken>, expected <IdentifierToken>
+            unexpected token <EndOfFileToken>, expected <CloseBraceToken>
         """
 
         assertThat(text).hasDiagnostics(diagnostics)

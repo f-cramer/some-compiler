@@ -77,7 +77,19 @@ class Parser private constructor(
         val openBraceToken = matchToken(SyntaxType.OpenBraceToken)
         val statements = buildList {
             while (current.type != SyntaxType.CloseBraceToken && current.type != SyntaxType.EndOfFileToken) {
+                val startToken = current
                 this += parseStatement()
+
+                // If parseStatement did not consume any tokens,
+                // we need to skip the current token and continue
+                // in order to avoid an infinite loop.
+                //
+                // We don't need to report an error, because we'll
+                // already have tried to parse an expression statement
+                // and reported one.
+                if (startToken == current) {
+                    next()
+                }
             }
         }
         val closeBraceToken = matchToken(SyntaxType.CloseBraceToken)
