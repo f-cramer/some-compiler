@@ -47,6 +47,7 @@ tasks.test {
 
 tasks.run.configure {
     outputs.upToDateWhen { false }
+    javaLauncher.set(javaToolchains.launcherFor(configureJavaToolchain))
 }
 
 kotlin {
