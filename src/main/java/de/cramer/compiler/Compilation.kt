@@ -2,7 +2,6 @@ package de.cramer.compiler
 
 import de.cramer.compiler.binding.Binder
 import de.cramer.compiler.binding.BoundGlobalScope
-import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
 
 data class Compilation(
@@ -15,7 +14,7 @@ data class Compilation(
         Binder.bindGlobalScope(previous?.globalScope, syntaxTree.root)
     }
 
-    fun evaluate(variables: MutableMap<VariableSymbol, Any>): EvaluationResult {
+    fun evaluate(variables: Variables): EvaluationResult {
         val diagnostics = syntaxTree.diagnostics + globalScope.diagnostics
         if (diagnostics.isNotEmpty()) {
             return EvaluationResult.Failure(diagnostics)

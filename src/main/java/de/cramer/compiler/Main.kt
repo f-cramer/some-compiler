@@ -1,6 +1,5 @@
 package de.cramer.compiler
 
-import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
 import de.cramer.compiler.syntax.writeTo
 import de.cramer.compiler.text.SourceText
@@ -26,7 +25,7 @@ fun main() {
 @Suppress("NestedBlockDepth")
 private fun acceptInputs() {
     val configuration = Configuration()
-    val variables = mutableMapOf<VariableSymbol, Any>()
+    val variables = Variables()
     val inputBuilder = StringBuilder()
 
     while (true) {

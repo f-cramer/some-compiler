@@ -13,7 +13,6 @@ import de.cramer.compiler.binding.BoundUnaryExpression
 import de.cramer.compiler.binding.BoundVariableDeclarationStatement
 import de.cramer.compiler.binding.BoundVariableExpression
 import de.cramer.compiler.binding.BoundWhileStatement
-import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
 import de.cramer.compiler.binding.binaryOperatorAdditionStringString
 import de.cramer.compiler.binding.binaryOperatorDivisionIntInt
@@ -34,7 +33,7 @@ import de.cramer.compiler.binding.unaryOperatorNegationInt
 
 class Evaluator(
     private val root: BoundStatement,
-    private val variables: MutableMap<VariableSymbol, Any>,
+    private val variables: Variables,
 ) {
     private var lastValue: Any? = null
 
@@ -140,7 +139,7 @@ class Evaluator(
     }
 
     private fun evaluateVariableExpression(expression: BoundVariableExpression): Any =
-        variables.getValue(expression.variable)
+        variables[expression.variable]!!
 
     private fun evaluateAssignmentExpression(expression: BoundAssignmentExpression): Any {
         val value = evaluateExpression(expression.expression)

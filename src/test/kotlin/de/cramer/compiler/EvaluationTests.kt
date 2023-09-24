@@ -8,7 +8,6 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
 import assertk.assertions.support.appendName
-import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.utils.AnnotatedText
@@ -24,8 +23,7 @@ class EvaluationTests {
     fun `evaluation produces correct results`(text: String, expectedValue: Any) {
         val syntaxTree = SyntaxTree.parse(text)
         val compilation = Compilation(syntaxTree)
-        val variables = mutableMapOf<VariableSymbol, Any>()
-        val result = compilation.evaluate(variables)
+        val result = compilation.evaluate(Variables())
         val resultAssert = assertThat(result)
 
         when (result) {
@@ -206,7 +204,7 @@ class EvaluationTests {
             transform(appendName("diagnostics", separator = ".")) {
                 val syntaxTree = SyntaxTree.parse(SourceText(annotatedText.text))
                 val compilation = Compilation(syntaxTree)
-                val result = compilation.evaluate(mutableMapOf())
+                val result = compilation.evaluate(Variables())
                 assertThat(result, name = "evaluation result").isInstanceOf<EvaluationResult.Failure>()
                 result as EvaluationResult.Failure
                 result.diagnostics
@@ -251,6 +249,7 @@ class EvaluationTests {
             Arguments.of("{ var a = 0 if a != 0 a = 1 else a = 2 a }", 2),
             Arguments.of("{ var i = 10 var result = 0 while i > 0 { result = result + i i = i - 1 } result }", 55),
             Arguments.of("{ var result = 0 for i = 0 to 10 result = result + i result }", 55),
+            Arguments.of("{ var a = 0 { var a = 10 } a }", 0),
         )
     }
 }
