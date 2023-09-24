@@ -58,14 +58,12 @@ private fun acceptInputs() {
             inputBuilder.clear()
 
             if (configuration.showTree) {
-                print(ansi().fgBrightBlack())
                 syntaxTree.root.writeTo(System.out)
-                print(ansi().reset())
             }
 
             val compilation = Compilation(syntaxTree)
             when (val evaluationResult = compilation.evaluate(variables)) {
-                is EvaluationResult.Success -> println(evaluationResult.value)
+                is EvaluationResult.Success -> println(ansi().fgMagenta().a(evaluationResult.value).reset())
                 is EvaluationResult.Failure -> printDiagnostics(evaluationResult.diagnostics, syntaxTree.text)
             }
         } catch (e: Exception) {
