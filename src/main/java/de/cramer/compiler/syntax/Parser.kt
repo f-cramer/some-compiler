@@ -2,6 +2,13 @@ package de.cramer.compiler.syntax
 
 import de.cramer.compiler.Diagnostic
 import de.cramer.compiler.Diagnostics
+import de.cramer.compiler.syntax.expression.AssignmentExpression
+import de.cramer.compiler.syntax.expression.BinaryExpression
+import de.cramer.compiler.syntax.expression.ExpressionNode
+import de.cramer.compiler.syntax.expression.LiteralExpression
+import de.cramer.compiler.syntax.expression.NameExpression
+import de.cramer.compiler.syntax.expression.ParenthesizedExpression
+import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.text.TextSpan
 

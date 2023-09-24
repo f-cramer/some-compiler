@@ -1,4 +1,7 @@
-package de.cramer.compiler.syntax
+package de.cramer.compiler.syntax.expression
+
+import de.cramer.compiler.syntax.SyntaxType
+import de.cramer.compiler.syntax.Token
 
 data class ParenthesizedExpression(
     val openParenthesisToken: Token,

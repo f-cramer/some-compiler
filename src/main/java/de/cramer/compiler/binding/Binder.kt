@@ -2,17 +2,17 @@ package de.cramer.compiler.binding
 
 import de.cramer.compiler.Diagnostic
 import de.cramer.compiler.Diagnostics
-import de.cramer.compiler.syntax.AssignmentExpression
-import de.cramer.compiler.syntax.BinaryExpression
 import de.cramer.compiler.syntax.CodePointString
 import de.cramer.compiler.syntax.CompilationUnit
-import de.cramer.compiler.syntax.ExpressionNode
-import de.cramer.compiler.syntax.LiteralExpression
-import de.cramer.compiler.syntax.NameExpression
-import de.cramer.compiler.syntax.ParenthesizedExpression
 import de.cramer.compiler.syntax.SyntaxType
 import de.cramer.compiler.syntax.Token
-import de.cramer.compiler.syntax.UnaryExpression
+import de.cramer.compiler.syntax.expression.AssignmentExpression
+import de.cramer.compiler.syntax.expression.BinaryExpression
+import de.cramer.compiler.syntax.expression.ExpressionNode
+import de.cramer.compiler.syntax.expression.LiteralExpression
+import de.cramer.compiler.syntax.expression.NameExpression
+import de.cramer.compiler.syntax.expression.ParenthesizedExpression
+import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.text.TextSpan
 import java.util.ArrayDeque
 
