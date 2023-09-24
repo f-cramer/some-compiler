@@ -2,7 +2,7 @@ package de.cramer.compiler.syntax
 
 @Suppress("MagicNumber")
 fun SyntaxType.getUnaryOperatorPrecendence() = when (this) {
-    SyntaxType.PlusToken, SyntaxType.MinusToken, SyntaxType.BangToken -> 13
+    SyntaxType.PlusToken, SyntaxType.MinusToken, SyntaxType.BangToken, SyntaxType.TildeToken -> 13
     else -> null
 }
 
@@ -32,6 +32,7 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.PipeToken -> "|"
     SyntaxType.PipePipeToken -> "||"
     SyntaxType.CircumflexToken -> "^"
+    SyntaxType.TildeToken -> "~"
     SyntaxType.EqualsEqualsToken -> "=="
     SyntaxType.BangEqualsToken -> "!="
     SyntaxType.LessToken -> "<"

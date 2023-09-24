@@ -13,6 +13,7 @@ enum class SyntaxType {
     PipeToken,
     PipePipeToken,
     CircumflexToken,
+    TildeToken,
     EqualsToken,
     EqualsEqualsToken,
     BangToken,

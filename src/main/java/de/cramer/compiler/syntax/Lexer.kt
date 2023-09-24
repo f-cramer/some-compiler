@@ -145,6 +145,7 @@ class Lexer(
             '{' -> SyntaxType.OpenBraceToken
             '}' -> SyntaxType.CloseBraceToken
             '^' -> SyntaxType.CircumflexToken
+            '~' -> SyntaxType.TildeToken
             '<' -> if (peek().isEqualTo('=')) {
                 next()
                 SyntaxType.LessOrEqualToken

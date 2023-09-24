@@ -5,11 +5,13 @@ import de.cramer.compiler.syntax.SyntaxType
 val unaryOperatorIdentityInt = BoundUnaryOperator(BoundUnaryOperatorKind.Identity, SyntaxType.PlusToken, builtInTypeInt)
 val unaryOperatorNegationInt = BoundUnaryOperator(BoundUnaryOperatorKind.Negation, SyntaxType.MinusToken, builtInTypeInt)
 val unaryOperatorLogicalNegationBoolean = BoundUnaryOperator(BoundUnaryOperatorKind.LogicalNegation, SyntaxType.BangToken, builtInTypeBoolean)
+val unaryOperatorBitwiseComplementInt = BoundUnaryOperator(BoundUnaryOperatorKind.BitwiseComplement, SyntaxType.TildeToken, builtInTypeInt)
 
 val builtInUnaryOperators = listOf(
     unaryOperatorIdentityInt,
     unaryOperatorNegationInt,
     unaryOperatorLogicalNegationBoolean,
+    unaryOperatorBitwiseComplementInt,
 ).groupBy { it.tokenType }
 
 fun findBuiltInUnaryOperator(tokenType: SyntaxType, operandType: Type): BoundUnaryOperator? {
@@ -32,4 +34,5 @@ enum class BoundUnaryOperatorKind {
     Negation,
 
     LogicalNegation,
+    BitwiseComplement,
 }

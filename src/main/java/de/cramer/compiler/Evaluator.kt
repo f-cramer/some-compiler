@@ -15,6 +15,12 @@ import de.cramer.compiler.binding.BoundVariableExpression
 import de.cramer.compiler.binding.BoundWhileStatement
 import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
 import de.cramer.compiler.binding.binaryOperatorAdditionStringString
+import de.cramer.compiler.binding.binaryOperatorBitwiseAndBooleanBoolean
+import de.cramer.compiler.binding.binaryOperatorBitwiseAndIntInt
+import de.cramer.compiler.binding.binaryOperatorBitwiseOrBooleanBoolean
+import de.cramer.compiler.binding.binaryOperatorBitwiseOrIntInt
+import de.cramer.compiler.binding.binaryOperatorBitwiseXorBooleanBoolean
+import de.cramer.compiler.binding.binaryOperatorBitwiseXorIntInt
 import de.cramer.compiler.binding.binaryOperatorDivisionIntInt
 import de.cramer.compiler.binding.binaryOperatorEqualsAny
 import de.cramer.compiler.binding.binaryOperatorGreaterIntInt
@@ -23,10 +29,10 @@ import de.cramer.compiler.binding.binaryOperatorLessIntInt
 import de.cramer.compiler.binding.binaryOperatorLessOrEqualIntInt
 import de.cramer.compiler.binding.binaryOperatorLogicalAndBooleanBoolean
 import de.cramer.compiler.binding.binaryOperatorLogicalOrBooleanBoolean
-import de.cramer.compiler.binding.binaryOperatorLogicalXorBooleanBoolean
 import de.cramer.compiler.binding.binaryOperatorMultiplicationIntInt
 import de.cramer.compiler.binding.binaryOperatorNotEqualsAny
 import de.cramer.compiler.binding.binaryOperatorSubtractionIntInt
+import de.cramer.compiler.binding.unaryOperatorBitwiseComplementInt
 import de.cramer.compiler.binding.unaryOperatorIdentityInt
 import de.cramer.compiler.binding.unaryOperatorLogicalNegationBoolean
 import de.cramer.compiler.binding.unaryOperatorNegationInt
@@ -111,6 +117,7 @@ class Evaluator(
             unaryOperatorIdentityInt -> operand
             unaryOperatorNegationInt -> -(operand as Int)
             unaryOperatorLogicalNegationBoolean -> !(operand as Boolean)
+            unaryOperatorBitwiseComplementInt -> (operand as Int).inv()
             else -> throw NotImplementedError("evaluation for operator ${expression.operator}")
         }
     }
@@ -124,9 +131,12 @@ class Evaluator(
             binaryOperatorSubtractionIntInt -> left as Int - right as Int
             binaryOperatorMultiplicationIntInt -> left as Int * right as Int
             binaryOperatorDivisionIntInt -> left as Int / right as Int
-            binaryOperatorLogicalAndBooleanBoolean -> left as Boolean && right as Boolean
-            binaryOperatorLogicalOrBooleanBoolean -> left as Boolean || right as Boolean
-            binaryOperatorLogicalXorBooleanBoolean -> left as Boolean xor right as Boolean
+            binaryOperatorLogicalAndBooleanBoolean, binaryOperatorBitwiseAndBooleanBoolean -> left as Boolean && right as Boolean
+            binaryOperatorLogicalOrBooleanBoolean, binaryOperatorBitwiseOrBooleanBoolean -> left as Boolean || right as Boolean
+            binaryOperatorBitwiseXorBooleanBoolean -> left as Boolean xor right as Boolean
+            binaryOperatorBitwiseAndIntInt -> (left as Int) and (right as Int)
+            binaryOperatorBitwiseOrIntInt -> (left as Int) or (right as Int)
+            binaryOperatorBitwiseXorIntInt -> (left as Int) xor (right as Int)
             binaryOperatorEqualsAny -> left == right
             binaryOperatorNotEqualsAny -> left != right
             binaryOperatorAdditionStringString -> left as String + right as String

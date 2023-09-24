@@ -7,8 +7,13 @@ val binaryOperatorSubtractionIntInt = BoundBinaryOperator(BoundBinaryOperatorKin
 val binaryOperatorMultiplicationIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Multiplication, SyntaxType.AsteriskToken, builtInTypeInt)
 val binaryOperatorDivisionIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Division, SyntaxType.SlashToken, builtInTypeInt)
 val binaryOperatorLogicalAndBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.LogicalAnd, SyntaxType.AmpersandAmpersandToken, builtInTypeBoolean)
-val binaryOperatorLogicalOrBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.LogicalAnd, SyntaxType.PipePipeToken, builtInTypeBoolean)
-val binaryOperatorLogicalXorBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.LogicalAnd, SyntaxType.CircumflexToken, builtInTypeBoolean)
+val binaryOperatorLogicalOrBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.LogicalOr, SyntaxType.PipePipeToken, builtInTypeBoolean)
+val binaryOperatorBitwiseAndBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseAnd, SyntaxType.AmpersandToken, builtInTypeBoolean)
+val binaryOperatorBitwiseOrBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseOr, SyntaxType.PipeToken, builtInTypeBoolean)
+val binaryOperatorBitwiseXorBooleanBoolean = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseXor, SyntaxType.CircumflexToken, builtInTypeBoolean)
+val binaryOperatorBitwiseAndIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseAnd, SyntaxType.AmpersandToken, builtInTypeInt)
+val binaryOperatorBitwiseOrIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseOr, SyntaxType.PipeToken, builtInTypeInt)
+val binaryOperatorBitwiseXorIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.BitwiseXor, SyntaxType.CircumflexToken, builtInTypeInt)
 val binaryOperatorEqualsAny = BoundBinaryOperator(BoundBinaryOperatorKind.Equals, SyntaxType.EqualsEqualsToken, anyTypeMatcher, anyTypeMatcher, builtInTypeBoolean)
 val binaryOperatorNotEqualsAny = BoundBinaryOperator(BoundBinaryOperatorKind.NotEquals, SyntaxType.BangEqualsToken, anyTypeMatcher, anyTypeMatcher, builtInTypeBoolean)
 val binaryOperatorAdditionStringString = BoundBinaryOperator(BoundBinaryOperatorKind.Addition, SyntaxType.PlusToken, builtInTypeString)
@@ -24,7 +29,12 @@ private val builtInBinaryOperators = listOf(
     binaryOperatorDivisionIntInt,
     binaryOperatorLogicalAndBooleanBoolean,
     binaryOperatorLogicalOrBooleanBoolean,
-    binaryOperatorLogicalXorBooleanBoolean,
+    binaryOperatorBitwiseAndBooleanBoolean,
+    binaryOperatorBitwiseOrBooleanBoolean,
+    binaryOperatorBitwiseXorBooleanBoolean,
+    binaryOperatorBitwiseAndIntInt,
+    binaryOperatorBitwiseOrIntInt,
+    binaryOperatorBitwiseXorIntInt,
     binaryOperatorEqualsAny,
     binaryOperatorNotEqualsAny,
     binaryOperatorAdditionStringString,
@@ -61,7 +71,9 @@ enum class BoundBinaryOperatorKind {
 
     LogicalAnd,
     LogicalOr,
-    LogicalXor,
+    BitwiseAnd,
+    BitwiseOr,
+    BitwiseXor,
 
     Equals,
     NotEquals,
