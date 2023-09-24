@@ -135,8 +135,8 @@ class Lexer(
             '/' -> SyntaxType.SlashToken
             '(' -> SyntaxType.OpenParenthesisToken
             ')' -> SyntaxType.CloseParenthesisToken
-            '{' -> SyntaxType.OpenBracketToken
-            '}' -> SyntaxType.CloseBracketToken
+            '{' -> SyntaxType.OpenBraceToken
+            '}' -> SyntaxType.CloseBraceToken
             '^' -> SyntaxType.CircumflexToken
             '&' -> if (peek().isEqualTo('&')) {
                 next()

@@ -21,8 +21,8 @@ enum class SyntaxType {
 
     OpenParenthesisToken,
     CloseParenthesisToken,
-    OpenBracketToken,
-    CloseBracketToken,
+    OpenBraceToken,
+    CloseBraceToken,
 
     TrueKeyword,
     FalseKeyword,

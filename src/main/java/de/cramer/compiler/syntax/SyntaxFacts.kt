@@ -35,8 +35,8 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.BangEqualsToken -> "!="
     SyntaxType.OpenParenthesisToken -> "("
     SyntaxType.CloseParenthesisToken -> ")"
-    SyntaxType.OpenBracketToken -> "{"
-    SyntaxType.CloseBracketToken -> "}"
+    SyntaxType.OpenBraceToken -> "{"
+    SyntaxType.CloseBraceToken -> "}"
     SyntaxType.TrueKeyword -> "true"
     SyntaxType.FalseKeyword -> "false"
     else -> null
