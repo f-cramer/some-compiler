@@ -142,7 +142,7 @@ class Binder(
         }
 
         if (variable.type != boundExpression.type) {
-            diagnostics.incompatibleAssignment(expression.span, variable.type, boundExpression.type)
+            diagnostics.incompatibleAssignment(expression.value.span, variable.type, boundExpression.type)
         }
         return BoundAssignmentExpression(variable, boundExpression)
     }
@@ -182,11 +182,11 @@ class Binder(
 }
 
 fun Diagnostics.unknownUnaryOperator(operator: Token, type: Type) {
-    this += Diagnostic(operator.span, "unary operator '${operator.text}' is not defined for type ${type.name}")
+    this += Diagnostic(operator.span, "unary operator '${operator.text}' is not defined for type '${type.name}'")
 }
 
 fun Diagnostics.unknownBinaryOperator(operator: Token, leftType: Type, rightType: Type) {
-    this += Diagnostic(operator.span, "binary operator '${operator.text}' is not defined for types ${leftType.name} and ${rightType.name}")
+    this += Diagnostic(operator.span, "binary operator '${operator.text}' is not defined for types '${leftType.name}' and '${rightType.name}'")
 }
 
 fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
@@ -194,7 +194,7 @@ fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
 }
 
 private fun Diagnostics.incompatibleAssignment(span: TextSpan, variableType: Type, expressionType: Type) {
-    this += Diagnostic(span, "cannot assign expression of type ${expressionType.name} to variable of type ${variableType.name}")
+    this += Diagnostic(span, "cannot assign expression of type '${expressionType.name}' to variable of type '${variableType.name}'")
 }
 
 private fun Diagnostics.variableAlreadyDeclared(span: TextSpan, name: CodePointString) {
