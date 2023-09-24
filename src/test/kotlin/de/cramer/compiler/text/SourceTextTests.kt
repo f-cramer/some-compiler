@@ -1,9 +1,8 @@
-package de.cramer.compiler.syntax
+package de.cramer.compiler.text
 
 import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.prop
-import de.cramer.compiler.text.SourceText
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource

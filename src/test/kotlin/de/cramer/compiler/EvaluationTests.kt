@@ -1,13 +1,12 @@
-package de.cramer.compiler.syntax
+package de.cramer.compiler
 
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
-import de.cramer.compiler.Compilation
-import de.cramer.compiler.EvaluationResult
 import de.cramer.compiler.binding.VariableSymbol
+import de.cramer.compiler.syntax.SyntaxTree
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource

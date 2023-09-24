@@ -1,4 +1,4 @@
-package de.cramer.compiler.syntax
+package de.cramer.compiler.utils
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -6,6 +6,10 @@ import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotInstanceOf
 import assertk.assertions.isTrue
 import assertk.assertions.prop
+import de.cramer.compiler.syntax.SyntaxNode
+import de.cramer.compiler.syntax.SyntaxType
+import de.cramer.compiler.syntax.Token
+import de.cramer.compiler.syntax.assert
 import java.util.ArrayDeque
 
 class AssertingIterator private constructor(

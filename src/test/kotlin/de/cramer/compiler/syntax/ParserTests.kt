@@ -2,6 +2,7 @@ package de.cramer.compiler.syntax
 
 import de.cramer.compiler.syntax.expression.ExpressionNode
 import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.utils.AssertingIterator
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
