@@ -30,7 +30,7 @@ private fun acceptInputs() {
     val inputBuilder = StringBuilder()
 
     while (true) {
-        if (inputBuilder.isEmpty()) printPrompt() else printContinuation()
+        printPrompt(inputBuilder.isNotEmpty())
         val line = readlnOrNull() ?: return
 
         val isBlank = line.isBlank()
@@ -94,12 +94,9 @@ fun runBuiltinFunction(function: String, configuration: Configuration) {
     }
 }
 
-fun printPrompt() {
-    print(ansi().fgBrightBlue().a("> ").reset())
-}
-
-fun printContinuation() {
-    print("| ")
+fun printPrompt(continuation: Boolean) {
+    val char = if (continuation) '|' else '>'
+    print(ansi().fgBrightGreen().a("$char ").reset())
 }
 
 private fun printDiagnostics(diagnostics: List<Diagnostic>, text: SourceText) {
