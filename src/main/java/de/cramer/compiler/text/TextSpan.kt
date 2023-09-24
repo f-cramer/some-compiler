@@ -15,4 +15,6 @@ data class TextSpan(
 
     val range: IntRange
         get() = start..<end
+
+    override fun toString(): String = range.toString()
 }
