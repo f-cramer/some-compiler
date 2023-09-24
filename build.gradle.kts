@@ -45,6 +45,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.run.configure {
+    outputs.upToDateWhen { false }
+}
+
 kotlin {
     jvmToolchain(configureJavaToolchain)
 }
