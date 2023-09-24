@@ -9,7 +9,7 @@ data class Compilation(
 ) {
     fun evaluate(variables: MutableMap<VariableSymbol, Any>): EvaluationResult {
         val binder = Binder(variables)
-        val expression = binder.bindExpression(syntax.root)
+        val expression = binder.bindExpression(syntax.root.expression)
 
         val diagnostics = syntax.diagnostics + binder.diagnostics()
         if (diagnostics.isNotEmpty()) {

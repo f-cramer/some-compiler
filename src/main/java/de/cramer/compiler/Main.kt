@@ -58,7 +58,7 @@ private fun acceptInputs() {
             inputBuilder.clear()
 
             if (configuration.showTree) {
-                syntaxTree.root.writeTo(System.out)
+                syntaxTree.root.expression.writeTo(System.out)
             }
 
             val compilation = Compilation(syntaxTree)

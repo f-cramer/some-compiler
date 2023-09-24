@@ -15,6 +15,8 @@ class Parser private constructor(
     private val current: Token
         get() = peek(0)
 
+    fun diagnostics(): List<Diagnostic> = diagnostics
+
     private fun peek(offset: Int): Token {
         val index = this.index + offset
         return if (index >= tokens.size) {
@@ -39,10 +41,10 @@ class Parser private constructor(
         return Token(type, current.span, emptyCodePointString, null)
     }
 
-    fun parse(): SyntaxTree {
+    fun parse(): CompilationUnit {
         val expression = parseExpression()
         val endOfFileToken = matchToken(SyntaxType.EndOfFileToken)
-        return SyntaxTree(text, diagnostics.toList(), expression, endOfFileToken)
+        return CompilationUnit(expression, endOfFileToken)
     }
 
     private fun parseExpression(): ExpressionNode {

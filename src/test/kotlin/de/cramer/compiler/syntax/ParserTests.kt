@@ -15,7 +15,7 @@ class ParserTests {
         val unaryText = unary.getText()!!
         val binaryText = binary.getText()!!
         val text = "$unaryText a $binaryText b"
-        val expression = SyntaxTree.parse(text).root
+        val expression = SyntaxTree.parse(text).root.expression
 
         if (unaryPrecedence >= binaryPrecedence) {
             AssertingIterator(expression).use {
@@ -51,7 +51,7 @@ class ParserTests {
         val op1Text = op1.getText()!!
         val op2Text = op2.getText()!!
         val text = "a $op1Text b $op2Text c"
-        val expression = SyntaxTree.parse(text).root
+        val expression = SyntaxTree.parse(text).root.expression
 
         if (op1Precedence >= op2Precedence) {
             AssertingIterator(expression).use {
