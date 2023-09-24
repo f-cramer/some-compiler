@@ -12,6 +12,7 @@ import de.cramer.compiler.syntax.ParenthesizedExpression
 import de.cramer.compiler.syntax.SyntaxType
 import de.cramer.compiler.syntax.Token
 import de.cramer.compiler.syntax.UnaryExpression
+import de.cramer.compiler.text.TextSpan
 
 class Binder(
     private val variables: MutableMap<VariableSymbol, Any>,
@@ -90,7 +91,7 @@ class Binder(
         val existingVariable = variables.keys.find { it.name == name }
         if (existingVariable != null) {
             if (existingVariable.type != boundExpression.type) {
-                diagnostics.incompatibleAssignment(expression.equalsToken, existingVariable.type, boundExpression.type)
+                diagnostics.incompatibleAssignment(expression.span, existingVariable.type, boundExpression.type)
             }
         }
 
@@ -112,6 +113,6 @@ fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
     this += Diagnostic(identifier.span, "variable '$name' is not defined")
 }
 
-private fun Diagnostics.incompatibleAssignment(equalsToken: Token, variableType: Type, expressionType: Type) {
-    this += Diagnostic(equalsToken.span, "cannot assign expression of type ${expressionType.name} to variable of type ${variableType.name}")
+private fun Diagnostics.incompatibleAssignment(span: TextSpan, variableType: Type, expressionType: Type) {
+    this += Diagnostic(span, "cannot assign expression of type ${expressionType.name} to variable of type ${variableType.name}")
 }
