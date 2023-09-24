@@ -69,7 +69,10 @@ private fun acceptInputs() {
                 is EvaluationResult.Failure -> printDiagnostics(evaluationResult.diagnostics, syntaxTree.text)
             }
         } catch (e: Exception) {
-            println(ansi().error(e.message))
+            print(ansi().startError())
+            @Suppress("PrintStackTrace")
+            e.printStackTrace(System.out)
+            print(ansi().reset())
         }
     }
 }
@@ -126,7 +129,9 @@ private fun printDiagnostics(diagnostics: List<Diagnostic>, text: SourceText) {
     }
 }
 
-fun Ansi.error(error: String?): Ansi = fgRed().a(error).reset()
+fun Ansi.startError(): Ansi = fgRed()
+
+fun Ansi.error(error: String?): Ansi = startError().a(error).reset()
 
 data class Configuration(
     var showTree: Boolean = false,
