@@ -30,11 +30,11 @@ enum class SyntaxType {
     NameExpression,
     AssignmentExpression,
 
+    LiteralExpression,
     UnaryExpression,
     BinaryExpression,
     ParenthesizedExpression,
 
-    LiteralExpression,
     BadInputToken,
     EndOfFileToken,
 }
