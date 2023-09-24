@@ -20,3 +20,11 @@ data class BoundVariableDeclarationStatement(
 ) : BoundStatement {
     override val kind = BoundNodeKind.VariableDeclarationStatement
 }
+
+data class BoundIfStatement(
+    val condition: BoundExpression,
+    val thenStatement: BoundStatement,
+    val elseStatement: BoundStatement?,
+) : BoundStatement {
+    override val kind = BoundNodeKind.IfStatement
+}

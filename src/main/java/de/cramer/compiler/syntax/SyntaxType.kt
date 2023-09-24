@@ -32,6 +32,8 @@ enum class SyntaxType {
     ValKeyword,
     TrueKeyword,
     FalseKeyword,
+    IfKeyword,
+    ElseKeyword,
 
     NameExpression,
     AssignmentExpression,
@@ -44,6 +46,8 @@ enum class SyntaxType {
     BlockStatement,
     ExpressionStatement,
     VariableDeclarationStatement,
+    IfStatement,
+    ElseClause,
 
     CompilationUnit,
 

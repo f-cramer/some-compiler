@@ -15,6 +15,7 @@ import de.cramer.compiler.syntax.expression.ParenthesizedExpression
 import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
 import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.IfStatement
 import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
 import de.cramer.compiler.text.TextSpan
@@ -38,6 +39,7 @@ class Binder(
             is BlockStatement -> bindBlockStatement(statement)
             is ExpressionStatement -> bindExpressionStatement(statement)
             is VariableDeclarationStatement -> bindVariableDeclarationStatement(statement)
+            is IfStatement -> bindIfStatement(statement)
         }
     }
 
@@ -63,6 +65,21 @@ class Binder(
         }
 
         return BoundVariableDeclarationStatement(variable, initializer)
+    }
+
+    private fun bindIfStatement(statement: IfStatement): BoundIfStatement {
+        val condition = bindExpression(statement.condition, builtInTypeBoolean)
+        val thenStatement = bindStatement(statement.thenStatement)
+        val elseStatement = statement.elseClause?.statement?.let { bindStatement(it) }
+        return BoundIfStatement(condition, thenStatement, elseStatement)
+    }
+
+    private fun bindExpression(expression: ExpressionNode, targetType: Type): BoundExpression {
+        val result = bindExpression(expression)
+        if (result.type != targetType) {
+            diagnostics.cannotConvert(expression.span, result.type, targetType)
+        }
+        return result
     }
 
     private fun bindExpression(expression: ExpressionNode): BoundExpression {
@@ -203,4 +220,8 @@ private fun Diagnostics.variableAlreadyDeclared(span: TextSpan, name: CodePointS
 
 private fun Diagnostics.cannotAssign(equalsToken: Token, name: CodePointString) {
     this += Diagnostic(equalsToken.span, "variable '$name' is read-only and cannot be reassigned")
+}
+
+private fun Diagnostics.cannotConvert(span: TextSpan, actualType: Type, expectedType: Type) {
+    this += Diagnostic(span, "expected expression of type '${expectedType.name}' but got '${actualType.name}'")
 }

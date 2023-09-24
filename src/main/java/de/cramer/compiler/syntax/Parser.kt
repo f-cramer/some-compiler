@@ -10,7 +10,9 @@ import de.cramer.compiler.syntax.expression.NameExpression
 import de.cramer.compiler.syntax.expression.ParenthesizedExpression
 import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
+import de.cramer.compiler.syntax.statement.ElseClause
 import de.cramer.compiler.syntax.statement.ExpressionStatement
+import de.cramer.compiler.syntax.statement.IfStatement
 import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
 import de.cramer.compiler.text.SourceText
@@ -62,6 +64,7 @@ class Parser private constructor(
         return when (current.type) {
             SyntaxType.OpenBraceToken -> parseBlockStatement()
             SyntaxType.VarKeyword, SyntaxType.ValKeyword -> parseVariableDeclarationStatement()
+            SyntaxType.IfKeyword -> parseIfStatement()
             else -> parseExpressionStatement()
         }
     }
@@ -85,6 +88,20 @@ class Parser private constructor(
         val equalsToken = matchToken(SyntaxType.EqualsToken)
         val initializer = parseExpression()
         return VariableDeclarationStatement(keyword, identifier, equalsToken, initializer)
+    }
+
+    private fun parseIfStatement(): IfStatement {
+        val keyword = matchToken(SyntaxType.IfKeyword)
+        val condition = parseExpression()
+        val thenStatement = parseStatement()
+        val elseClause = if (current.type == SyntaxType.ElseKeyword) parseElseClause() else null
+        return IfStatement(keyword, condition, thenStatement, elseClause)
+    }
+
+    private fun parseElseClause(): ElseClause {
+        val keyword = matchToken(SyntaxType.ElseKeyword)
+        val statement = parseStatement()
+        return ElseClause(keyword, statement)
     }
 
     private fun parseExpressionStatement(): ExpressionStatement {

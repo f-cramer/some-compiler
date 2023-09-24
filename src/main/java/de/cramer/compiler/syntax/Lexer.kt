@@ -121,6 +121,8 @@ class Lexer(
             "false" -> SyntaxType.FalseKeyword to false
             "var" -> SyntaxType.VarKeyword to null
             "val" -> SyntaxType.ValKeyword to null
+            "if" -> SyntaxType.IfKeyword to null
+            "else" -> SyntaxType.ElseKeyword to null
             else -> SyntaxType.IdentifierToken to value
         }
         tokens += Token(type, TextSpan(position, index - position), value, tokenValue)

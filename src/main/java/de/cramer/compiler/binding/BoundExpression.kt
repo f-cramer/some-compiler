@@ -13,6 +13,7 @@ enum class BoundNodeKind {
     BlockStatement,
     ExpressionStatement,
     VariableDeclarationStatement,
+    IfStatement,
 }
 
 data class BoundLiteralExpression(

@@ -122,6 +122,23 @@ class EvaluationTests {
         assertThat(text).hasDiagnostics(diagnostics)
     }
 
+    @Test
+    fun `if-statement reports invalid assignment`() {
+        val text = """
+            {
+                var x = 10
+                if [10]
+                    x = 10
+            }
+        """
+
+        val diagnostics = """
+            expected expression of type 'boolean' but got 'int'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
     private fun Assert<String>.hasDiagnostics(diagnosticTexts: String) {
         hasDiagnostics(diagnosticTexts.trimIndent().lines())
     }
@@ -178,6 +195,9 @@ class EvaluationTests {
             Arguments.of("!true", false),
             Arguments.of("!false", true),
             Arguments.of("{ var a = 0 (a = 10) * a }", 100),
+            Arguments.of("{ var a = 0 if a == 0 a = 1 a }", 1),
+            Arguments.of("{ var a = 0 if a == 0 a = 1 else a = 2 a }", 1),
+            Arguments.of("{ var a = 0 if a != 0 a = 1 else a = 2 a }", 2),
         )
     }
 }

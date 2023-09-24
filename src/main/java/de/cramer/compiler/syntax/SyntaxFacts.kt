@@ -46,5 +46,7 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.FalseKeyword -> "false"
     SyntaxType.VarKeyword -> "var"
     SyntaxType.ValKeyword -> "val"
+    SyntaxType.IfKeyword -> "if"
+    SyntaxType.ElseKeyword -> "else"
     else -> null
 }
