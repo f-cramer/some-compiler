@@ -86,6 +86,7 @@ class LexerTests {
                 TokenTestData(SyntaxType.IdentifierToken, "abc"),
                 TokenTestData(SyntaxType.StringToken, "\"a\""),
                 TokenTestData(SyntaxType.StringToken, "\"abc\""),
+                TokenTestData(SyntaxType.StringToken, "\"\uD83C\uDF83\""),
             )
 
         private fun getSeparators() = listOf(

@@ -4,6 +4,7 @@ import de.cramer.compiler.Diagnostic
 import de.cramer.compiler.Diagnostics
 import de.cramer.compiler.syntax.AssignmentExpression
 import de.cramer.compiler.syntax.BinaryExpression
+import de.cramer.compiler.syntax.CodePointString
 import de.cramer.compiler.syntax.ExpressionNode
 import de.cramer.compiler.syntax.LiteralExpression
 import de.cramer.compiler.syntax.NameExpression
@@ -107,7 +108,7 @@ fun Diagnostics.unknownBinaryOperator(operator: Token, leftType: Type, rightType
     this += Diagnostic(operator.span, "binary operator '${operator.text}' is not defined for types ${leftType.name} and ${rightType.name}")
 }
 
-fun Diagnostics.undefinedName(identifier: Token, name: String) {
+fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
     this += Diagnostic(identifier.span, "variable '$name' is not defined")
 }
 

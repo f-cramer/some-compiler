@@ -36,7 +36,7 @@ class Parser private constructor(
         }
 
         diagnostics.unexpectedToken(type, current.type, current.span)
-        return Token(type, current.span, "", null)
+        return Token(type, current.span, emptyCodePointString, null)
     }
 
     fun parse(): SyntaxTree {

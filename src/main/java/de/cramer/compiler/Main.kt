@@ -119,8 +119,8 @@ private fun printDiagnostics(diagnostics: List<Diagnostic>, text: SourceText) {
         when {
             error.isEmpty() && suffix.isEmpty() -> print(ansi().error("_"))
             error.isEmpty() -> {}
-            error.isBlank() -> print(ansi().error("_".repeat(error.length)))
-            else -> print(ansi().error(error))
+            error.toString().isBlank() -> print(ansi().error("_".repeat(error.length)))
+            else -> print(ansi().error(error.toString()))
         }
         println(suffix)
     }

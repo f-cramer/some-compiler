@@ -15,43 +15,45 @@ class Lexer(
 
     fun lex(): List<Token> = buildList {
         while (index < text.length) {
-            when (val char = peek()!!) {
+            val char = peek()!!
+            when (char.singleOrNull()) {
                 '"' -> parseString(this)
                 ' ', '\n', '\r', '\t' -> parseWhitespace(this)
                 else -> when {
                     char.isDigit() -> parseNumber(this)
                     char.isWhitespace() -> parseWhitespace(this)
-                    char.isIdentifierStart() -> parseIdentifier(this)
+                    char.singleChar { it.isIdentifierStart() } -> parseIdentifier(this)
                     else -> parseOperator(this)
                 }
             }
         }
-        this += Token(SyntaxType.EndOfFileToken, TextSpan(index, 0), "\u0000", null)
+        this += Token(SyntaxType.EndOfFileToken, TextSpan(index, 0), "\u0000".asCodePoints(), null)
     }
 
-    private fun peek(): Char? = if (index < text.length) text[index] else null
+    private fun peek(): CodePoint? = if (index < text.length) text[index] else null
 
-    private fun next(): Char? = peek()?.also { index++ }
+    private fun next(): CodePoint? = peek()?.also { index++ }
 
     private fun expectNext(char: Char) {
         val position = index
         val next = next()
-        if (next != char) {
+        if (next == null || !next.isEqualTo(char)) {
             diagnostics.unexpectedCharacter(char.toString(), next, position)
         }
     }
 
-    private fun expectNext(expectedDescription: String, predicate: (Char) -> Boolean): Char {
+    private fun expectNext(expectedDescription: String, predicate: (Char) -> Boolean): CodePoint {
         val next = next()
-        if (next == null || !predicate(next)) {
+        if (next == null || !next.singleChar(predicate)) {
             diagnostics.unexpectedCharacter(expectedDescription, next, index)
         }
-        return next ?: '\u0000'
+        return next ?: CodePoint(0)
     }
 
     private fun parseString(tokens: MutableList<Token>) {
         val position = index
-        val value = buildString {
+
+        val value = buildList {
             expectNext('"')
 
             var escaped = false
@@ -63,43 +65,42 @@ class Lexer(
                 }
 
                 if (escaped) {
-                    append(next)
+                    this += next
                 } else {
-                    when (next) {
+                    when (next.singleOrNull()) {
                         '\\' -> escaped = true
                         '"' -> break
-                        else -> append(next)
+                        else -> this += next
                     }
                 }
             }
-        }
-        tokens += Token(SyntaxType.StringToken, TextSpan(position, value.length + 2), "\"$value\"", value)
+        }.asCodePoints()
+
+        tokens += Token(SyntaxType.StringToken, TextSpan(position, index - position), "\"$value\"".asCodePoints(), value.toString())
     }
 
     private fun parseWhitespace(tokens: MutableList<Token>) {
         val position = index
-        val value = buildString {
-            append(expectNext("whitespace") { it.isWhitespace() })
 
-            while (peek()?.isWhitespace() == true) {
-                val next = next()!!
-                append(next)
-            }
+        expectNext("whitespace") { it.isWhitespace() }
+        while (peek()?.isWhitespace() == true) {
+            next()
         }
+
+        val value = text.substring(position, index)
         tokens += Token(SyntaxType.WhitespaceToken, TextSpan(position, value.length), value, null)
     }
 
     private fun parseNumber(tokens: MutableList<Token>) {
         val position = index
-        val value = buildString {
-            append(expectNext("digit") { it.isDigit() })
 
-            while (peek()?.isDigit() == true) {
-                val next = next()!!
-                append(next)
-            }
+        expectNext("digit") { it.isDigit() }
+        while (peek()?.isDigit() == true) {
+            next()
         }
-        val numberValue = runCatching { value.toInt() }.getOrElse {
+
+        val value = text.substring(position, index)
+        val numberValue = runCatching { value.toString().toInt() }.getOrElse {
             diagnostics.invalidInt(value, TextSpan(position, value.length))
             0
         }
@@ -108,15 +109,14 @@ class Lexer(
 
     private fun parseIdentifier(tokens: MutableList<Token>) {
         val position = index
-        val value = buildString {
-            append(expectNext("identifier start") { it.isIdentifierStart() })
 
-            while (peek()?.isIdentifierPart() == true) {
-                val next = next()!!
-                append(next)
-            }
+        expectNext("identifier start") { it.isIdentifierStart() }
+        while (peek()?.singleChar { it.isIdentifierPart() } == true) {
+            next()
         }
-        val (type, tokenValue: Any?) = when (value) {
+
+        val value = text.substring(position, index)
+        val (type, tokenValue: Any?) = when (value.toString()) {
             "true" -> SyntaxType.TrueKeyword to true
             "false" -> SyntaxType.FalseKeyword to false
             else -> SyntaxType.IdentifierToken to value
@@ -126,7 +126,9 @@ class Lexer(
 
     private fun parseOperator(tokens: MutableList<Token>) {
         val position = index
-        val token = when (val next = next()) {
+
+        val next = next()
+        val token = when (next?.singleOrNull()) {
             '+' -> SyntaxType.PlusToken
             '-' -> SyntaxType.MinusToken
             '*' -> SyntaxType.AsteriskToken
@@ -136,28 +138,28 @@ class Lexer(
             '{' -> SyntaxType.OpenBracketToken
             '}' -> SyntaxType.CloseBracketToken
             '^' -> SyntaxType.CircumflexToken
-            '&' -> if (peek() == '&') {
+            '&' -> if (peek().isEqualTo('&')) {
                 next()
                 SyntaxType.AmpersandAmpersandToken
             } else {
                 SyntaxType.AmpersandToken
             }
 
-            '|' -> if (peek() == '|') {
+            '|' -> if (peek().isEqualTo('|')) {
                 next()
                 SyntaxType.PipePipeToken
             } else {
                 SyntaxType.PipeToken
             }
 
-            '=' -> if (peek() == '=') {
+            '=' -> if (peek().isEqualTo('=')) {
                 next()
                 SyntaxType.EqualsEqualsToken
             } else {
                 SyntaxType.EqualsToken
             }
 
-            '!' -> if (peek() == '=') {
+            '!' -> if (peek().isEqualTo('=')) {
                 next()
                 SyntaxType.BangEqualsToken
             } else {
@@ -179,13 +181,13 @@ class Lexer(
 
     private fun Char.isIdentifierPart(): Boolean = isLetterOrDigit() || this == '_'
 
-    private fun Diagnostics.unexpectedCharacter(expected: String, actual: Char?, position: Int) {
+    private fun Diagnostics.unexpectedCharacter(expected: String, actual: CodePoint?, position: Int) {
         val message = "unexpected character: expected $expected but got ${actual ?: "eof"}"
         this += Diagnostic(TextSpan(position, 1), message)
     }
 
-    private fun Diagnostics.invalidInt(value: String, span: TextSpan) {
-        val message = "$value is not a valid int"
+    private fun Diagnostics.invalidInt(value: CodePointString, span: TextSpan) {
+        val message = "'$value' is not a valid int"
         this += Diagnostic(span, message)
     }
 }

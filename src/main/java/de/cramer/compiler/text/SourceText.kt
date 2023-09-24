@@ -1,7 +1,11 @@
 package de.cramer.compiler.text
 
+import de.cramer.compiler.syntax.CodePoint
+import de.cramer.compiler.syntax.CodePointString
+import de.cramer.compiler.syntax.asCodePoints
+
 class SourceText(
-    private val text: String,
+    private val text: CodePointString,
 ) {
     val length: Int = text.length
 
@@ -31,14 +35,16 @@ class SourceText(
         return lower - 1
     }
 
-    override fun toString() = text
+    override fun toString() = text.toString()
 
     fun substring(start: Int, end: Int) = text.substring(start, end)
 
     fun substring(span: TextSpan) = text.substring(span.range)
 
+    constructor(text: String) : this(text.asCodePoints())
+
     companion object {
-        private fun parseLines(sourceText: SourceText, text: String): List<TextLine> {
+        private fun parseLines(sourceText: SourceText, text: CodePointString): List<TextLine> {
             var position = 0
             var lineStart = 0
 
@@ -64,13 +70,13 @@ class SourceText(
             return TextLine(sourceText, lineStart, lineLength, lineLengthIncludingLineBreak)
         }
 
-        private fun getLineBreakWidth(text: String, i: Int): Int {
+        private fun getLineBreakWidth(text: CodePointString, i: Int): Int {
             val c = text[i]
-            val l = if (i + 1 >= text.length) '\u0000' else text[i + 1]
+            val l = if (i + 1 >= text.length) CodePoint(0) else text[i + 1]
 
             return when {
-                c == '\r' && l == '\n' -> 2
-                c == '\r' || c == '\n' -> 1
+                c.isEqualTo('\r') && l.isEqualTo('\n') -> 2
+                c.isEqualTo('\r') || c.isEqualTo('\n') -> 1
                 else -> 0
             }
         }
