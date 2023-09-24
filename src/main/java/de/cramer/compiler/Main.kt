@@ -77,18 +77,27 @@ private fun acceptInputs() {
 
 fun runBuiltinFunction(function: String, configuration: Configuration) {
     when (function) {
-        "cls", "clear" -> println(ansi().eraseScreen())
-        "exit", "q", "quit" -> exitProcess(0)
-        "showTree" -> {
-            configuration.showTree = !configuration.showTree
-            if (configuration.showTree) {
-                println("showing parse tree")
-            } else {
-                println("not showing parse tree")
-            }
-        }
-
+        "cls", "clear" -> runBuiltinFunctionClear()
+        "exit", "q", "quit" -> runBuiltinFunctionExit()
+        "showTree" -> runBuiltinFunctionShowTree(configuration)
         else -> println(ansi().error("unknown builtin function \"$function\""))
+    }
+}
+
+private fun runBuiltinFunctionClear() {
+    println(ansi().eraseScreen())
+}
+
+private fun runBuiltinFunctionExit() {
+    exitProcess(0)
+}
+
+private fun runBuiltinFunctionShowTree(configuration: Configuration) {
+    configuration.showTree = !configuration.showTree
+    if (configuration.showTree) {
+        println("showing parse tree")
+    } else {
+        println("not showing parse tree")
     }
 }
 
