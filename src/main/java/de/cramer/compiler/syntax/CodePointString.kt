@@ -2,7 +2,7 @@ package de.cramer.compiler.syntax
 
 class CodePointString internal constructor(
     private val codePoints: IntArray,
-) {
+) : Iterable<CodePoint> {
     val length: Int
         get() = codePoints.size
     val string: String by lazy {
@@ -33,6 +33,17 @@ class CodePointString internal constructor(
         other as CodePointString
 
         return string == other.string
+    }
+
+    override fun iterator(): Iterator<CodePoint> = CodePointIterator(codePoints.iterator())
+
+    @Suppress("IteratorNotThrowingNoSuchElementException")
+    private class CodePointIterator(
+        private val delegate: IntIterator,
+    ) : Iterator<CodePoint> {
+        override fun hasNext(): Boolean = delegate.hasNext()
+
+        override fun next(): CodePoint = CodePoint(delegate.nextInt())
     }
 }
 
