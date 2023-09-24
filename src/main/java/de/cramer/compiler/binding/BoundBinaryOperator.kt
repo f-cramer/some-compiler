@@ -12,6 +12,10 @@ val binaryOperatorLogicalXorBooleanBoolean = BoundBinaryOperator(BoundBinaryOper
 val binaryOperatorEqualsAny = BoundBinaryOperator(BoundBinaryOperatorKind.Equals, SyntaxType.EqualsEqualsToken, anyTypeMatcher, anyTypeMatcher, builtInTypeBoolean)
 val binaryOperatorNotEqualsAny = BoundBinaryOperator(BoundBinaryOperatorKind.NotEquals, SyntaxType.BangEqualsToken, anyTypeMatcher, anyTypeMatcher, builtInTypeBoolean)
 val binaryOperatorAdditionStringString = BoundBinaryOperator(BoundBinaryOperatorKind.Addition, SyntaxType.PlusToken, builtInTypeString)
+val binaryOperatorLessIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Less, SyntaxType.LessToken, builtInTypeInt, builtInTypeBoolean)
+val binaryOperatorLessOrEqualIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.LessOrEqual, SyntaxType.LessOrEqualToken, builtInTypeInt, builtInTypeBoolean)
+val binaryOperatorGreaterIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Greater, SyntaxType.GreaterToken, builtInTypeInt, builtInTypeBoolean)
+val binaryOperatorGreaterOrEqualIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.GreaterOrEqual, SyntaxType.GreaterOrEqualToken, builtInTypeInt, builtInTypeBoolean)
 
 private val builtInBinaryOperators = listOf(
     binaryOperatorAdditionIntInt,
@@ -24,6 +28,10 @@ private val builtInBinaryOperators = listOf(
     binaryOperatorEqualsAny,
     binaryOperatorNotEqualsAny,
     binaryOperatorAdditionStringString,
+    binaryOperatorLessIntInt,
+    binaryOperatorLessOrEqualIntInt,
+    binaryOperatorGreaterIntInt,
+    binaryOperatorGreaterOrEqualIntInt,
 ).groupBy { it.tokenType }
 
 fun findBuiltInBinaryOperator(tokenType: SyntaxType, leftOperandType: Type, rightOperandType: Type): BoundBinaryOperator? {
@@ -40,6 +48,9 @@ data class BoundBinaryOperator(
 ) {
     constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, type: Type) :
         this(kind, tokenType, TypeMatcher(type), TypeMatcher(type), type)
+
+    constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, operandType: Type, type: Type) :
+        this(kind, tokenType, TypeMatcher(operandType), TypeMatcher(operandType), type)
 }
 
 enum class BoundBinaryOperatorKind {
@@ -54,4 +65,9 @@ enum class BoundBinaryOperatorKind {
 
     Equals,
     NotEquals,
+
+    Less,
+    LessOrEqual,
+    Greater,
+    GreaterOrEqual,
 }

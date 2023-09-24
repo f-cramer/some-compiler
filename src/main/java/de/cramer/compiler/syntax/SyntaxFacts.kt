@@ -10,6 +10,7 @@ fun SyntaxType.getUnaryOperatorPrecendence() = when (this) {
 fun SyntaxType.getBinaryOperatorPrecendence() = when (this) {
     SyntaxType.AsteriskToken, SyntaxType.SlashToken -> 12
     SyntaxType.PlusToken, SyntaxType.MinusToken -> 11
+    SyntaxType.LessToken, SyntaxType.LessOrEqualToken, SyntaxType.GreaterToken, SyntaxType.GreaterOrEqualToken -> 9
     SyntaxType.EqualsEqualsToken, SyntaxType.BangEqualsToken -> 8
     SyntaxType.AmpersandToken -> 7
     SyntaxType.CircumflexToken -> 6
@@ -33,6 +34,10 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.CircumflexToken -> "^"
     SyntaxType.EqualsEqualsToken -> "=="
     SyntaxType.BangEqualsToken -> "!="
+    SyntaxType.LessToken -> "<"
+    SyntaxType.LessOrEqualToken -> "<="
+    SyntaxType.GreaterToken -> ">"
+    SyntaxType.GreaterOrEqualToken -> ">="
     SyntaxType.OpenParenthesisToken -> "("
     SyntaxType.CloseParenthesisToken -> ")"
     SyntaxType.OpenBraceToken -> "{"

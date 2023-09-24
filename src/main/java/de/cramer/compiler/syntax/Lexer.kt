@@ -140,6 +140,20 @@ class Lexer(
             '{' -> SyntaxType.OpenBraceToken
             '}' -> SyntaxType.CloseBraceToken
             '^' -> SyntaxType.CircumflexToken
+            '<' -> if (peek().isEqualTo('=')) {
+                next()
+                SyntaxType.LessOrEqualToken
+            } else {
+                SyntaxType.LessToken
+            }
+
+            '>' -> if (peek().isEqualTo('=')) {
+                next()
+                SyntaxType.GreaterOrEqualToken
+            } else {
+                SyntaxType.GreaterToken
+            }
+
             '&' -> if (peek().isEqualTo('&')) {
                 next()
                 SyntaxType.AmpersandAmpersandToken

@@ -15,6 +15,10 @@ import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
 import de.cramer.compiler.binding.binaryOperatorAdditionStringString
 import de.cramer.compiler.binding.binaryOperatorDivisionIntInt
 import de.cramer.compiler.binding.binaryOperatorEqualsAny
+import de.cramer.compiler.binding.binaryOperatorGreaterIntInt
+import de.cramer.compiler.binding.binaryOperatorGreaterOrEqualIntInt
+import de.cramer.compiler.binding.binaryOperatorLessIntInt
+import de.cramer.compiler.binding.binaryOperatorLessOrEqualIntInt
 import de.cramer.compiler.binding.binaryOperatorLogicalAndBooleanBoolean
 import de.cramer.compiler.binding.binaryOperatorLogicalOrBooleanBoolean
 import de.cramer.compiler.binding.binaryOperatorLogicalXorBooleanBoolean
@@ -97,6 +101,10 @@ class Evaluator(
             binaryOperatorEqualsAny -> left == right
             binaryOperatorNotEqualsAny -> left != right
             binaryOperatorAdditionStringString -> left as String + right as String
+            binaryOperatorLessIntInt -> (left as Int) < (right as Int)
+            binaryOperatorLessOrEqualIntInt -> left as Int <= right as Int
+            binaryOperatorGreaterIntInt -> left as Int > right as Int
+            binaryOperatorGreaterOrEqualIntInt -> left as Int >= right as Int
             else -> throw NotImplementedError("evaluation for operator ${expression.operator}")
         }
     }

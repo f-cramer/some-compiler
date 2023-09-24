@@ -118,6 +118,10 @@ class LexerTests {
             if (type1 == SyntaxType.EqualsToken && type2 == SyntaxType.EqualsEqualsToken) return true
             if (type1 == SyntaxType.BangToken && type2 == SyntaxType.EqualsToken) return true
             if (type1 == SyntaxType.BangToken && type2 == SyntaxType.EqualsEqualsToken) return true
+            if (type1 == SyntaxType.LessToken && type2 == SyntaxType.EqualsToken) return true
+            if (type1 == SyntaxType.LessToken && type2 == SyntaxType.EqualsEqualsToken) return true
+            if (type1 == SyntaxType.GreaterToken && type2 == SyntaxType.EqualsToken) return true
+            if (type1 == SyntaxType.GreaterToken && type2 == SyntaxType.EqualsEqualsToken) return true
 
             return false
         }

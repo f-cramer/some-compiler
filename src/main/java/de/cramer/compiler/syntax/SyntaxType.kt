@@ -17,6 +17,10 @@ enum class SyntaxType {
     EqualsEqualsToken,
     BangToken,
     BangEqualsToken,
+    LessToken,
+    LessOrEqualToken,
+    GreaterToken,
+    GreaterOrEqualToken,
     IdentifierToken,
 
     OpenParenthesisToken,
