@@ -139,6 +139,23 @@ class EvaluationTests {
         assertThat(text).hasDiagnostics(diagnostics)
     }
 
+    @Test
+    fun `while-statement reports invalid assignment`() {
+        val text = """
+            {
+                var x = 10
+                while [10]
+                    x = 10
+            }
+        """
+
+        val diagnostics = """
+            expected expression of type 'boolean' but got 'int'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
     private fun Assert<String>.hasDiagnostics(diagnosticTexts: String) {
         hasDiagnostics(diagnosticTexts.trimIndent().lines())
     }
@@ -198,6 +215,7 @@ class EvaluationTests {
             Arguments.of("{ var a = 0 if a == 0 a = 1 a }", 1),
             Arguments.of("{ var a = 0 if a == 0 a = 1 else a = 2 a }", 1),
             Arguments.of("{ var a = 0 if a != 0 a = 1 else a = 2 a }", 2),
+            Arguments.of("{ var i = 10 var result = 0 while i > 0 { result = result + i i = i - 1 } result }", 55),
         )
     }
 }

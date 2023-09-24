@@ -123,6 +123,7 @@ class Lexer(
             "val" -> SyntaxType.ValKeyword to null
             "if" -> SyntaxType.IfKeyword to null
             "else" -> SyntaxType.ElseKeyword to null
+            "while" -> SyntaxType.WhileKeyword to null
             else -> SyntaxType.IdentifierToken to value
         }
         tokens += Token(type, TextSpan(position, index - position), value, tokenValue)

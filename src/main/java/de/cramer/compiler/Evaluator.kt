@@ -11,6 +11,7 @@ import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.binding.BoundUnaryExpression
 import de.cramer.compiler.binding.BoundVariableDeclarationStatement
 import de.cramer.compiler.binding.BoundVariableExpression
+import de.cramer.compiler.binding.BoundWhileStatement
 import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
 import de.cramer.compiler.binding.binaryOperatorAdditionStringString
@@ -47,6 +48,7 @@ class Evaluator(
             is BoundExpressionStatement -> evaluateExpressionStatement(statement)
             is BoundVariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement)
             is BoundIfStatement -> evaluateIfStatement(statement)
+            is BoundWhileStatement -> evaluateWhileStatement(statement)
         }
     }
 
@@ -72,6 +74,12 @@ class Evaluator(
             evaluateStatement(statement.thenStatement)
         } else if (statement.elseStatement != null) {
             evaluateStatement(statement.elseStatement)
+        }
+    }
+
+    private fun evaluateWhileStatement(statement: BoundWhileStatement) {
+        while (evaluateExpression(statement.condition) as Boolean) {
+            evaluateStatement(statement.body)
         }
     }
 

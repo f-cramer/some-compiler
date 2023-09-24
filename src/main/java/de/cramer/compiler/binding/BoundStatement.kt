@@ -28,3 +28,10 @@ data class BoundIfStatement(
 ) : BoundStatement {
     override val kind = BoundNodeKind.IfStatement
 }
+
+data class BoundWhileStatement(
+    val condition: BoundExpression,
+    val body: BoundStatement,
+) : BoundStatement {
+    override val kind = BoundNodeKind.WhileStatement
+}

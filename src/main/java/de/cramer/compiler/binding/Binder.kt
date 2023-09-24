@@ -18,6 +18,7 @@ import de.cramer.compiler.syntax.statement.ExpressionStatement
 import de.cramer.compiler.syntax.statement.IfStatement
 import de.cramer.compiler.syntax.statement.StatementNode
 import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
+import de.cramer.compiler.syntax.statement.WhileStatement
 import de.cramer.compiler.text.TextSpan
 import java.util.ArrayDeque
 
@@ -40,6 +41,7 @@ class Binder(
             is ExpressionStatement -> bindExpressionStatement(statement)
             is VariableDeclarationStatement -> bindVariableDeclarationStatement(statement)
             is IfStatement -> bindIfStatement(statement)
+            is WhileStatement -> bindWhileStatement(statement)
         }
     }
 
@@ -72,6 +74,12 @@ class Binder(
         val thenStatement = bindStatement(statement.thenStatement)
         val elseStatement = statement.elseClause?.statement?.let { bindStatement(it) }
         return BoundIfStatement(condition, thenStatement, elseStatement)
+    }
+
+    private fun bindWhileStatement(statement: WhileStatement): BoundWhileStatement {
+        val condition = bindExpression(statement.condition, builtInTypeBoolean)
+        val body = bindStatement(statement.body)
+        return BoundWhileStatement(condition, body)
     }
 
     private fun bindExpression(expression: ExpressionNode, targetType: Type): BoundExpression {
