@@ -5,13 +5,13 @@ import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
 
 data class Compilation(
-    val syntax: SyntaxTree,
+    val syntaxTree: SyntaxTree,
 ) {
     fun evaluate(variables: MutableMap<VariableSymbol, Any>): EvaluationResult {
         val binder = Binder(variables)
-        val expression = binder.bindExpression(syntax.root.expression)
+        val expression = binder.bindExpression(syntaxTree.root.expression)
 
-        val diagnostics = syntax.diagnostics + binder.diagnostics()
+        val diagnostics = syntaxTree.diagnostics + binder.diagnostics()
         if (diagnostics.isNotEmpty()) {
             return EvaluationResult.Failure(diagnostics)
         }
