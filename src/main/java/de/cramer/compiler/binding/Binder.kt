@@ -161,6 +161,12 @@ class Binder(
 
     private fun bindNameExpression(expression: NameExpression): BoundExpression {
         val name = expression.identifier.text
+        if (name.isEmpty()) {
+            // This means the token was inserted by the parse. We already
+            // reported an error, so we can just return an error expression.
+            return BoundLiteralExpression(0, builtInTypeInt)
+        }
+
         val variable = scope[name]
         if (variable == null) {
             diagnostics.undefinedName(expression.identifier, name)

@@ -188,6 +188,17 @@ class EvaluationTests {
         assertThat(text).hasDiagnostics(diagnostics)
     }
 
+    @Test
+    fun `name expression does not report error for inserted token`() {
+        val text = "[]"
+
+        val diagnostics = """
+            unexpected token <EndOfFileToken>, expected <IdentifierToken>
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
     private fun Assert<String>.hasDiagnostics(diagnosticTexts: String) {
         hasDiagnostics(diagnosticTexts.trimIndent().lines())
     }

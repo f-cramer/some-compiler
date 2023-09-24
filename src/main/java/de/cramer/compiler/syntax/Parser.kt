@@ -178,7 +178,7 @@ class Parser private constructor(
             SyntaxType.StringToken -> parseStringLiteral()
             SyntaxType.IdentifierToken -> parseNameExpression()
             SyntaxType.OpenParenthesisToken -> parseParenthesizedExpression()
-            else -> parseNumberLiteral()
+            else -> parseNameExpression()
         }
     }
 
