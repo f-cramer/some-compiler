@@ -1,12 +1,18 @@
 package de.cramer.compiler
 
+import assertk.Assert
 import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.prop
+import assertk.assertions.support.appendName
 import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.syntax.SyntaxTree
+import de.cramer.compiler.text.SourceText
+import de.cramer.compiler.utils.AnnotatedText
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -28,6 +34,115 @@ class EvaluationTests {
 
             is EvaluationResult.Failure -> resultAssert.isInstanceOf<EvaluationResult.Failure>()
                 .prop(EvaluationResult.Failure::diagnostics).isEmpty()
+        }
+    }
+
+    @Test
+    fun `variable declaration reports redeclaration`() {
+        val text = """
+            {
+                var x = 10
+                var y = 100
+                {
+                    var x = 10
+                }
+                var [x] = 5
+            }
+        """
+
+        val diagnostics = """
+            variable 'x' has already been declared
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `name reports undefined`() {
+        val text = "[x] * 10"
+
+        val diagnostics = """
+            variable 'x' is not defined
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `assignment reports reassignment`() {
+        val text = """
+            {
+                val x = 5
+                x [=] 10
+            }
+        """
+
+        val diagnostics = """
+            variable 'x' is read-only and cannot be reassigned
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `assignment reports invalid assignment`() {
+        val text = """
+            {
+                var x = 5
+                x = [true]
+            }
+        """
+
+        val diagnostics = """
+            cannot assign expression of type 'boolean' to variable of type 'int'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `unary reports undefined operator`() {
+        val text = "[+]true"
+
+        val diagnostics = """
+            unary operator '+' is not defined for type 'boolean'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    @Test
+    fun `binary reports undefined operator`() {
+        val text = "1 [&&] 2"
+
+        val diagnostics = """
+            binary operator '&&' is not defined for types 'int' and 'int'
+        """
+
+        assertThat(text).hasDiagnostics(diagnostics)
+    }
+
+    private fun Assert<String>.hasDiagnostics(diagnosticTexts: String) {
+        hasDiagnostics(diagnosticTexts.trimIndent().lines())
+    }
+
+    private fun Assert<String>.hasDiagnostics(diagnosticTexts: List<String>) {
+        given {
+            val annotatedText = AnnotatedText(it.trimIndent())
+            if (annotatedText.spans.size != diagnosticTexts.size) {
+                error("diagnosticTexts.size does not match number of spans in code")
+            }
+            val diagnostics = annotatedText.spans.zip(diagnosticTexts)
+                .map { (span, message) -> Diagnostic(span, message) }
+
+            transform(appendName("diagnostics", separator = ".")) {
+                val syntaxTree = SyntaxTree.parse(SourceText(annotatedText.text))
+                val compilation = Compilation(syntaxTree)
+                val result = compilation.evaluate(mutableMapOf())
+                assertThat(result, name = "evaluation result").isInstanceOf<EvaluationResult.Failure>()
+                result as EvaluationResult.Failure
+                result.diagnostics
+            }.containsExactlyInAnyOrder(*diagnostics.toTypedArray())
         }
     }
 
