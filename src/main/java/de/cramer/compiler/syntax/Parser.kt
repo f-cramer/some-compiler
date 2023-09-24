@@ -12,6 +12,7 @@ import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
 import de.cramer.compiler.syntax.statement.ExpressionStatement
 import de.cramer.compiler.syntax.statement.StatementNode
+import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.text.TextSpan
 
@@ -60,6 +61,7 @@ class Parser private constructor(
     private fun parseStatement(): StatementNode {
         return when (current.type) {
             SyntaxType.OpenBraceToken -> parseBlockStatement()
+            SyntaxType.VarKeyword, SyntaxType.ValKeyword -> parseVariableDeclarationStatement()
             else -> parseExpressionStatement()
         }
     }
@@ -74,6 +76,15 @@ class Parser private constructor(
         val closeBraceToken = matchToken(SyntaxType.CloseBraceToken)
 
         return BlockStatement(openBraceToken, statements, closeBraceToken)
+    }
+
+    private fun parseVariableDeclarationStatement(): StatementNode {
+        val expected = if (current.type == SyntaxType.VarKeyword) SyntaxType.VarKeyword else SyntaxType.ValKeyword
+        val keyword = matchToken(expected)
+        val identifier = matchToken(SyntaxType.IdentifierToken)
+        val equalsToken = matchToken(SyntaxType.EqualsToken)
+        val initializer = parseExpression()
+        return VariableDeclarationStatement(keyword, identifier, equalsToken, initializer)
     }
 
     private fun parseExpressionStatement(): ExpressionStatement {

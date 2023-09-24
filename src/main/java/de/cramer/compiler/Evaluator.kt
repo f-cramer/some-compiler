@@ -8,6 +8,7 @@ import de.cramer.compiler.binding.BoundExpressionStatement
 import de.cramer.compiler.binding.BoundLiteralExpression
 import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.binding.BoundUnaryExpression
+import de.cramer.compiler.binding.BoundVariableDeclarationStatement
 import de.cramer.compiler.binding.BoundVariableExpression
 import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
@@ -39,6 +40,7 @@ class Evaluator(
         when (statement) {
             is BoundBlockStatement -> evaluateBlockStatement(statement)
             is BoundExpressionStatement -> evaluateExpressionStatement(statement)
+            is BoundVariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement)
         }
     }
 
@@ -50,6 +52,12 @@ class Evaluator(
 
     private fun evaluateExpressionStatement(statement: BoundExpressionStatement) {
         lastValue = evaluateExpression(statement.expression)
+    }
+
+    private fun evaluateVariableDeclarationStatement(statement: BoundVariableDeclarationStatement) {
+        val value = evaluateExpression(statement.initializer)
+        variables[statement.variable] = value
+        lastValue = value
     }
 
     private fun evaluateExpression(expression: BoundExpression): Any {

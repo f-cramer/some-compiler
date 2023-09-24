@@ -16,6 +16,7 @@ import de.cramer.compiler.syntax.expression.UnaryExpression
 import de.cramer.compiler.syntax.statement.BlockStatement
 import de.cramer.compiler.syntax.statement.ExpressionStatement
 import de.cramer.compiler.syntax.statement.StatementNode
+import de.cramer.compiler.syntax.statement.VariableDeclarationStatement
 import de.cramer.compiler.text.TextSpan
 import java.util.ArrayDeque
 
@@ -36,6 +37,7 @@ class Binder(
         return when (statement) {
             is BlockStatement -> bindBlockStatement(statement)
             is ExpressionStatement -> bindExpressionStatement(statement)
+            is VariableDeclarationStatement -> bindVariableDeclarationStatement(statement)
         }
     }
 
@@ -50,7 +52,20 @@ class Binder(
         return BoundExpressionStatement(expression)
     }
 
-    fun bindExpression(expression: ExpressionNode): BoundExpression {
+    private fun bindVariableDeclarationStatement(statement: VariableDeclarationStatement): BoundVariableDeclarationStatement {
+        val name = statement.identifier.text
+        val isReadOnly = statement.keyword.type == SyntaxType.ValKeyword
+        val initializer = bindExpression(statement.initializer)
+        val variable = VariableSymbol(name, isReadOnly, initializer.type)
+
+        if (!scope.declare(variable)) {
+            diagnostics.variableAlreadyDeclared(statement.identifier.span, name)
+        }
+
+        return BoundVariableDeclarationStatement(variable, initializer)
+    }
+
+    private fun bindExpression(expression: ExpressionNode): BoundExpression {
         return when (expression) {
             is ParenthesizedExpression -> bindParameterizedExpression(expression)
             is LiteralExpression -> bindLiteralExpression(expression)
@@ -117,12 +132,17 @@ class Binder(
         val name = expression.identifier.text
         val boundExpression = bindExpression(expression.value)
 
-        val variable = VariableSymbol(name, boundExpression.type)
-        if (!scope.declare(variable)) {
-            val existingVariable = scope[name]!!
-            if (existingVariable.type != boundExpression.type) {
-                diagnostics.incompatibleAssignment(expression.span, existingVariable.type, boundExpression.type)
-            }
+        val variable = scope[name] ?: run {
+            diagnostics.undefinedName(expression.identifier, name)
+            return BoundLiteralExpression(0, builtInTypeInt)
+        }
+
+        if (variable.isReadOnly) {
+            diagnostics.cannotAssign(expression.equalsToken, name)
+        }
+
+        if (variable.type != boundExpression.type) {
+            diagnostics.incompatibleAssignment(expression.span, variable.type, boundExpression.type)
         }
         return BoundAssignmentExpression(variable, boundExpression)
     }
@@ -175,4 +195,12 @@ fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
 
 private fun Diagnostics.incompatibleAssignment(span: TextSpan, variableType: Type, expressionType: Type) {
     this += Diagnostic(span, "cannot assign expression of type ${expressionType.name} to variable of type ${variableType.name}")
+}
+
+private fun Diagnostics.variableAlreadyDeclared(span: TextSpan, name: CodePointString) {
+    this += Diagnostic(span, "variable '$name' has already been declared")
+}
+
+private fun Diagnostics.cannotAssign(equalsToken: Token, name: CodePointString) {
+    this += Diagnostic(equalsToken.span, "variable '$name' is read-only and cannot be reassigned")
 }

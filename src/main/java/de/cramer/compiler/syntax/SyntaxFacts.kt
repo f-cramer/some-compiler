@@ -39,5 +39,7 @@ fun SyntaxType.getText() = when (this) {
     SyntaxType.CloseBraceToken -> "}"
     SyntaxType.TrueKeyword -> "true"
     SyntaxType.FalseKeyword -> "false"
+    SyntaxType.VarKeyword -> "var"
+    SyntaxType.ValKeyword -> "val"
     else -> null
 }

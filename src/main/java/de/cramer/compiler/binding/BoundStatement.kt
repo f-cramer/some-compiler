@@ -13,3 +13,10 @@ data class BoundExpressionStatement(
 ) : BoundStatement {
     override val kind = BoundNodeKind.ExpressionStatement
 }
+
+data class BoundVariableDeclarationStatement(
+    val variable: VariableSymbol,
+    val initializer: BoundExpression,
+) : BoundStatement {
+    override val kind = BoundNodeKind.VariableDeclarationStatement
+}

@@ -24,6 +24,8 @@ enum class SyntaxType {
     OpenBraceToken,
     CloseBraceToken,
 
+    VarKeyword,
+    ValKeyword,
     TrueKeyword,
     FalseKeyword,
 
@@ -37,6 +39,7 @@ enum class SyntaxType {
 
     BlockStatement,
     ExpressionStatement,
+    VariableDeclarationStatement,
 
     CompilationUnit,
 

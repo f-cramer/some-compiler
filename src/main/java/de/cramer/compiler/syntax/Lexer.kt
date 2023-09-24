@@ -119,6 +119,8 @@ class Lexer(
         val (type, tokenValue: Any?) = when (value.toString()) {
             "true" -> SyntaxType.TrueKeyword to true
             "false" -> SyntaxType.FalseKeyword to false
+            "var" -> SyntaxType.VarKeyword to null
+            "val" -> SyntaxType.ValKeyword to null
             else -> SyntaxType.IdentifierToken to value
         }
         tokens += Token(type, TextSpan(position, index - position), value, tokenValue)
