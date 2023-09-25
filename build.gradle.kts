@@ -37,7 +37,6 @@ dependencies {
 
 val configureJavaToolchain = Action<JavaToolchainSpec> {
     languageVersion = JavaLanguageVersion.of(17)
-    vendor = JvmVendorSpec.ORACLE
 }
 
 tasks.test {
