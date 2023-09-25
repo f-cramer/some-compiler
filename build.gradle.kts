@@ -3,7 +3,6 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("jvm") version "1.9.10"
     application
-    id("org.graalvm.buildtools.native") version "0.9.27"
 
     id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
@@ -52,14 +51,6 @@ tasks.run.configure {
 
 kotlin {
     jvmToolchain(configureJavaToolchain)
-}
-
-graalvmNative {
-    binaries {
-        named("main") {
-            javaLauncher.set(javaToolchains.launcherFor(configureJavaToolchain))
-        }
-    }
 }
 
 ktlint {
