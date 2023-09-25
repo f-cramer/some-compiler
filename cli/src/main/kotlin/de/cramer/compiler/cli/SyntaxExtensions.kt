@@ -1,5 +1,7 @@
-package de.cramer.compiler.syntax
+package de.cramer.compiler.cli
 
+import de.cramer.compiler.syntax.SyntaxNode
+import de.cramer.compiler.syntax.Token
 import org.fusesource.jansi.Ansi
 import org.fusesource.jansi.Ansi.ansi
 import java.io.PrintStream

@@ -1,7 +1,10 @@
-package de.cramer.compiler
+package de.cramer.compiler.cli
 
+import de.cramer.compiler.Compilation
+import de.cramer.compiler.Diagnostic
+import de.cramer.compiler.EvaluationResult
+import de.cramer.compiler.Variables
 import de.cramer.compiler.syntax.SyntaxTree
-import de.cramer.compiler.syntax.writeTo
 import de.cramer.compiler.text.SourceText
 import de.cramer.compiler.text.TextSpan
 import org.fusesource.jansi.Ansi
