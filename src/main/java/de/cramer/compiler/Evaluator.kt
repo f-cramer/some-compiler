@@ -4,11 +4,13 @@ import de.cramer.compiler.binding.BoundAssignmentExpression
 import de.cramer.compiler.binding.BoundBinaryExpression
 import de.cramer.compiler.binding.BoundBlockStatement
 import de.cramer.compiler.binding.BoundExpression
+import de.cramer.compiler.binding.BoundExpressionKind
 import de.cramer.compiler.binding.BoundExpressionStatement
 import de.cramer.compiler.binding.BoundForStatement
 import de.cramer.compiler.binding.BoundIfStatement
 import de.cramer.compiler.binding.BoundLiteralExpression
 import de.cramer.compiler.binding.BoundStatement
+import de.cramer.compiler.binding.BoundStatementKind
 import de.cramer.compiler.binding.BoundUnaryExpression
 import de.cramer.compiler.binding.BoundVariableDeclarationStatement
 import de.cramer.compiler.binding.BoundVariableExpression
@@ -49,13 +51,13 @@ class Evaluator(
     }
 
     private fun evaluateStatement(statement: BoundStatement) {
-        when (statement) {
-            is BoundBlockStatement -> evaluateBlockStatement(statement)
-            is BoundExpressionStatement -> evaluateExpressionStatement(statement)
-            is BoundVariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement)
-            is BoundIfStatement -> evaluateIfStatement(statement)
-            is BoundWhileStatement -> evaluateWhileStatement(statement)
-            is BoundForStatement -> evaluateForStatement(statement)
+        when (statement.kind) {
+            BoundStatementKind.BlockStatement -> evaluateBlockStatement(statement as BoundBlockStatement)
+            BoundStatementKind.ExpressionStatement -> evaluateExpressionStatement(statement as BoundExpressionStatement)
+            BoundStatementKind.VariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement as BoundVariableDeclarationStatement)
+            BoundStatementKind.IfStatement -> evaluateIfStatement(statement as BoundIfStatement)
+            BoundStatementKind.WhileStatement -> evaluateWhileStatement(statement as BoundWhileStatement)
+            BoundStatementKind.ForStatement -> evaluateForStatement(statement as BoundForStatement)
         }
     }
 
@@ -100,12 +102,12 @@ class Evaluator(
     }
 
     private fun evaluateExpression(expression: BoundExpression): Any {
-        return when (expression) {
-            is BoundLiteralExpression -> evaluateLiteralExpression(expression)
-            is BoundUnaryExpression -> evaluateUnaryExpression(expression)
-            is BoundBinaryExpression -> evaluateBinaryExpression(expression)
-            is BoundVariableExpression -> evaluateVariableExpression(expression)
-            is BoundAssignmentExpression -> evaluateAssignmentExpression(expression)
+        return when (expression.kind) {
+            BoundExpressionKind.LiteralExpression -> evaluateLiteralExpression(expression as BoundLiteralExpression)
+            BoundExpressionKind.UnaryExpression -> evaluateUnaryExpression(expression as BoundUnaryExpression)
+            BoundExpressionKind.BinaryExpression -> evaluateBinaryExpression(expression as BoundBinaryExpression)
+            BoundExpressionKind.VariableExpression -> evaluateVariableExpression(expression as BoundVariableExpression)
+            BoundExpressionKind.AssignmentExpression -> evaluateAssignmentExpression(expression as BoundAssignmentExpression)
         }
     }
 

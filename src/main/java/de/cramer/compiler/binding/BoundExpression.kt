@@ -2,35 +2,33 @@ package de.cramer.compiler.binding
 
 sealed interface BoundExpression : BoundNode {
     val type: Type
+    val kind: BoundExpressionKind
 }
 
-enum class BoundNodeKind {
-    Literal,
+enum class BoundExpressionKind {
+    LiteralExpression,
     UnaryExpression,
     BinaryExpression,
     VariableExpression,
     AssignmentExpression,
-    BlockStatement,
-    ExpressionStatement,
-    VariableDeclarationStatement,
-    IfStatement,
-    WhileStatement,
-    ForStatement,
 }
 
 data class BoundLiteralExpression(
     val value: Any,
     override val type: Type,
 ) : BoundExpression {
-    override val kind = BoundNodeKind.Literal
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.LiteralExpression
 }
 
 data class BoundUnaryExpression(
     val operator: BoundUnaryOperator,
     val operand: BoundExpression,
 ) : BoundExpression {
-    override val kind = BoundNodeKind.UnaryExpression
-    override val type = operator.type
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.UnaryExpression
+    override val type: Type
+        get() = operator.type
 }
 
 data class BoundBinaryExpression(
@@ -38,21 +36,27 @@ data class BoundBinaryExpression(
     val operator: BoundBinaryOperator,
     val right: BoundExpression,
 ) : BoundExpression {
-    override val kind = BoundNodeKind.BinaryExpression
-    override val type = operator.type
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.BinaryExpression
+    override val type: Type
+        get() = operator.type
 }
 
 data class BoundVariableExpression(
     val variable: VariableSymbol,
 ) : BoundExpression {
-    override val kind = BoundNodeKind.VariableExpression
-    override val type = variable.type
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.VariableExpression
+    override val type: Type
+        get() = variable.type
 }
 
 data class BoundAssignmentExpression(
     val variable: VariableSymbol,
     val expression: BoundExpression,
 ) : BoundExpression {
-    override val kind = BoundNodeKind.AssignmentExpression
-    override val type = variable.type
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.AssignmentExpression
+    override val type: Type
+        get() = variable.type
 }

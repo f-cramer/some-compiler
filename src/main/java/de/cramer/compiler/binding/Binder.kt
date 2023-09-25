@@ -37,13 +37,14 @@ class Binder(
     fun diagnostics(): List<Diagnostic> = diagnostics.toList()
 
     fun bindStatement(statement: StatementNode): BoundStatement {
-        return when (statement) {
-            is BlockStatement -> bindBlockStatement(statement)
-            is ExpressionStatement -> bindExpressionStatement(statement)
-            is VariableDeclarationStatement -> bindVariableDeclarationStatement(statement)
-            is IfStatement -> bindIfStatement(statement)
-            is WhileStatement -> bindWhileStatement(statement)
-            is ForStatement -> bindForStatement(statement)
+        return when (statement.type) {
+            SyntaxType.BlockStatement -> bindBlockStatement(statement as BlockStatement)
+            SyntaxType.ExpressionStatement -> bindExpressionStatement(statement as ExpressionStatement)
+            SyntaxType.VariableDeclarationStatement -> bindVariableDeclarationStatement(statement as VariableDeclarationStatement)
+            SyntaxType.IfStatement -> bindIfStatement(statement as IfStatement)
+            SyntaxType.WhileStatement -> bindWhileStatement(statement as WhileStatement)
+            SyntaxType.ForStatement -> bindForStatement(statement as ForStatement)
+            else -> error("unknown statement type ${statement.type}")
         }
     }
 
@@ -108,13 +109,14 @@ class Binder(
     }
 
     private fun bindExpression(expression: ExpressionNode): BoundExpression {
-        return when (expression) {
-            is ParenthesizedExpression -> bindParameterizedExpression(expression)
-            is LiteralExpression -> bindLiteralExpression(expression)
-            is UnaryExpression -> bindUnaryExpression(expression)
-            is BinaryExpression -> bindBinaryExpression(expression)
-            is NameExpression -> bindNameExpression(expression)
-            is AssignmentExpression -> bindAssignmentExpression(expression)
+        return when (expression.type) {
+            SyntaxType.ParenthesizedExpression -> bindParameterizedExpression(expression as ParenthesizedExpression)
+            SyntaxType.LiteralExpression -> bindLiteralExpression(expression as LiteralExpression)
+            SyntaxType.UnaryExpression -> bindUnaryExpression(expression as UnaryExpression)
+            SyntaxType.BinaryExpression -> bindBinaryExpression(expression as BinaryExpression)
+            SyntaxType.NameExpression -> bindNameExpression(expression as NameExpression)
+            SyntaxType.AssignmentExpression -> bindAssignmentExpression(expression as AssignmentExpression)
+            else -> error("unknown expression type ${expression.type}")
         }
     }
 

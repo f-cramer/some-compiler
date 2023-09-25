@@ -1,24 +1,38 @@
 package de.cramer.compiler.binding
 
-sealed interface BoundStatement : BoundNode
+sealed interface BoundStatement : BoundNode {
+    val kind: BoundStatementKind
+}
+
+enum class BoundStatementKind {
+    BlockStatement,
+    ExpressionStatement,
+    VariableDeclarationStatement,
+    IfStatement,
+    WhileStatement,
+    ForStatement,
+}
 
 data class BoundBlockStatement(
     val statements: List<BoundStatement>,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.BlockStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.BlockStatement
 }
 
 data class BoundExpressionStatement(
     val expression: BoundExpression,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.ExpressionStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.ExpressionStatement
 }
 
 data class BoundVariableDeclarationStatement(
     val variable: VariableSymbol,
     val initializer: BoundExpression,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.VariableDeclarationStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.VariableDeclarationStatement
 }
 
 data class BoundIfStatement(
@@ -26,14 +40,16 @@ data class BoundIfStatement(
     val thenStatement: BoundStatement,
     val elseStatement: BoundStatement?,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.IfStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.IfStatement
 }
 
 data class BoundWhileStatement(
     val condition: BoundExpression,
     val body: BoundStatement,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.WhileStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.WhileStatement
 }
 
 data class BoundForStatement(
@@ -42,5 +58,6 @@ data class BoundForStatement(
     val upperBound: BoundExpression,
     val body: BoundStatement,
 ) : BoundStatement {
-    override val kind = BoundNodeKind.ForStatement
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.ForStatement
 }
