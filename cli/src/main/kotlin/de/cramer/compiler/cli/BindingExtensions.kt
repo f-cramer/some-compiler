@@ -6,7 +6,7 @@ import de.cramer.compiler.binding.BoundNode
 import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.binding.BoundUnaryOperator
 import de.cramer.compiler.binding.LabelSymbol
-import de.cramer.compiler.binding.Type
+import de.cramer.compiler.binding.TypeSymbol
 import de.cramer.compiler.binding.VariableSymbol
 import de.cramer.compiler.binding.getChildren
 import de.cramer.compiler.binding.getProperties
@@ -67,7 +67,7 @@ private fun Any.asString(): String = when (this) {
     is BoundBinaryOperator -> tokenType.getText() ?: ""
     is LabelSymbol -> name
     is String -> "\"$this\""
-    is Type -> name
+    is TypeSymbol -> name
     is VariableSymbol -> name.toString()
     else -> toString()
 }

@@ -1,7 +1,7 @@
 package de.cramer.compiler.binding
 
 sealed interface BoundExpression : BoundNode {
-    val type: Type
+    val type: TypeSymbol
     val kind: BoundExpressionKind
 }
 
@@ -15,7 +15,7 @@ enum class BoundExpressionKind {
 
 data class BoundLiteralExpression(
     val value: Any,
-    override val type: Type,
+    override val type: TypeSymbol,
 ) : BoundExpression {
     override val kind: BoundExpressionKind
         get() = BoundExpressionKind.LiteralExpression
@@ -27,7 +27,7 @@ data class BoundUnaryExpression(
 ) : BoundExpression {
     override val kind: BoundExpressionKind
         get() = BoundExpressionKind.UnaryExpression
-    override val type: Type
+    override val type: TypeSymbol
         get() = operator.type
 }
 
@@ -38,7 +38,7 @@ data class BoundBinaryExpression(
 ) : BoundExpression {
     override val kind: BoundExpressionKind
         get() = BoundExpressionKind.BinaryExpression
-    override val type: Type
+    override val type: TypeSymbol
         get() = operator.type
 }
 
@@ -47,7 +47,7 @@ data class BoundVariableExpression(
 ) : BoundExpression {
     override val kind: BoundExpressionKind
         get() = BoundExpressionKind.VariableExpression
-    override val type: Type
+    override val type: TypeSymbol
         get() = variable.type
 }
 
@@ -57,6 +57,6 @@ data class BoundAssignmentExpression(
 ) : BoundExpression {
     override val kind: BoundExpressionKind
         get() = BoundExpressionKind.AssignmentExpression
-    override val type: Type
+    override val type: TypeSymbol
         get() = variable.type
 }

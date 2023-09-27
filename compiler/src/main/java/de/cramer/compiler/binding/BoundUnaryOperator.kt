@@ -14,7 +14,7 @@ val builtInUnaryOperators = listOf(
     unaryOperatorBitwiseComplementInt,
 ).groupBy { it.tokenType }
 
-fun findBuiltInUnaryOperator(tokenType: SyntaxType, operandType: Type): BoundUnaryOperator? {
+fun findBuiltInUnaryOperator(tokenType: SyntaxType, operandType: TypeSymbol): BoundUnaryOperator? {
     val operators = builtInUnaryOperators[tokenType] ?: return null
     return operators.find { it.operandTypeMatcher(operandType) }
 }
@@ -23,9 +23,9 @@ data class BoundUnaryOperator(
     val kind: BoundUnaryOperatorKind,
     val tokenType: SyntaxType,
     val operandTypeMatcher: TypeMatcher,
-    val type: Type,
+    val type: TypeSymbol,
 ) {
-    constructor(kind: BoundUnaryOperatorKind, tokenType: SyntaxType, type: Type) :
+    constructor(kind: BoundUnaryOperatorKind, tokenType: SyntaxType, type: TypeSymbol) :
         this(kind, tokenType, TypeMatcher(type), type)
 }
 

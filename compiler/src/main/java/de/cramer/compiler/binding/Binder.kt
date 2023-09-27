@@ -100,7 +100,7 @@ class Binder(
         return BoundForStatement(variable, lowerBound, upperBound, body)
     }
 
-    private fun bindExpression(expression: ExpressionNode, targetType: Type): BoundExpression {
+    private fun bindExpression(expression: ExpressionNode, targetType: TypeSymbol): BoundExpression {
         val result = bindExpression(expression)
         if (result.type != targetType) {
             diagnostics.cannotConvert(expression.span, result.type, targetType)
@@ -144,7 +144,7 @@ class Binder(
         return BoundUnaryExpression(boundOperator, boundOperand)
     }
 
-    private fun bindUnaryOperator(type: SyntaxType, operandType: Type): BoundUnaryOperator? =
+    private fun bindUnaryOperator(type: SyntaxType, operandType: TypeSymbol): BoundUnaryOperator? =
         findBuiltInUnaryOperator(type, operandType)
 
     private fun bindBinaryExpression(expression: BinaryExpression): BoundExpression {
@@ -158,7 +158,7 @@ class Binder(
         return BoundBinaryExpression(boundLeftExpression, boundOperator, boundRightExpression)
     }
 
-    private fun bindBinaryOperator(type: SyntaxType, leftType: Type, rightType: Type): BoundBinaryOperator? =
+    private fun bindBinaryOperator(type: SyntaxType, leftType: TypeSymbol, rightType: TypeSymbol): BoundBinaryOperator? =
         findBuiltInBinaryOperator(type, leftType, rightType)
 
     private fun bindNameExpression(expression: NameExpression): BoundExpression {
@@ -233,11 +233,11 @@ class Binder(
     }
 }
 
-fun Diagnostics.unknownUnaryOperator(operator: Token, type: Type) {
+fun Diagnostics.unknownUnaryOperator(operator: Token, type: TypeSymbol) {
     this += Diagnostic(operator.span, "unary operator '${operator.text}' is not defined for type '${type.name}'")
 }
 
-fun Diagnostics.unknownBinaryOperator(operator: Token, leftType: Type, rightType: Type) {
+fun Diagnostics.unknownBinaryOperator(operator: Token, leftType: TypeSymbol, rightType: TypeSymbol) {
     this += Diagnostic(operator.span, "binary operator '${operator.text}' is not defined for types '${leftType.name}' and '${rightType.name}'")
 }
 
@@ -245,7 +245,7 @@ fun Diagnostics.undefinedName(identifier: Token, name: CodePointString) {
     this += Diagnostic(identifier.span, "variable '$name' is not defined")
 }
 
-private fun Diagnostics.incompatibleAssignment(span: TextSpan, variableType: Type, expressionType: Type) {
+private fun Diagnostics.incompatibleAssignment(span: TextSpan, variableType: TypeSymbol, expressionType: TypeSymbol) {
     this += Diagnostic(span, "cannot assign expression of type '${expressionType.name}' to variable of type '${variableType.name}'")
 }
 
@@ -257,6 +257,6 @@ private fun Diagnostics.cannotAssign(equalsToken: Token, name: CodePointString) 
     this += Diagnostic(equalsToken.span, "variable '$name' is read-only and cannot be reassigned")
 }
 
-private fun Diagnostics.cannotConvert(span: TextSpan, actualType: Type, expectedType: Type) {
+private fun Diagnostics.cannotConvert(span: TextSpan, actualType: TypeSymbol, expectedType: TypeSymbol) {
     this += Diagnostic(span, "expected expression of type '${expectedType.name}' but got '${actualType.name}'")
 }

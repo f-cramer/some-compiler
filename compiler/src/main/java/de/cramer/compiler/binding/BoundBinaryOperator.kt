@@ -45,7 +45,7 @@ private val builtInBinaryOperators = listOf(
     binaryOperatorGreaterOrEqualIntInt,
 ).groupBy { it.tokenType }
 
-fun findBuiltInBinaryOperator(tokenType: SyntaxType, leftOperandType: Type, rightOperandType: Type): BoundBinaryOperator? {
+fun findBuiltInBinaryOperator(tokenType: SyntaxType, leftOperandType: TypeSymbol, rightOperandType: TypeSymbol): BoundBinaryOperator? {
     val operators = builtInBinaryOperators[tokenType] ?: return null
     return operators.find { it.leftOperandTypeMatcher(leftOperandType) && it.rightOperandTypeMatcher(rightOperandType) }
 }
@@ -55,12 +55,12 @@ data class BoundBinaryOperator(
     val tokenType: SyntaxType,
     val leftOperandTypeMatcher: TypeMatcher,
     val rightOperandTypeMatcher: TypeMatcher,
-    val type: Type,
+    val type: TypeSymbol,
 ) {
-    constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, type: Type) :
+    constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, type: TypeSymbol) :
         this(kind, tokenType, TypeMatcher(type), TypeMatcher(type), type)
 
-    constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, operandType: Type, type: Type) :
+    constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, operandType: TypeSymbol, type: TypeSymbol) :
         this(kind, tokenType, TypeMatcher(operandType), TypeMatcher(operandType), type)
 
     override fun toString(): String = tokenType.getText() ?: ""
