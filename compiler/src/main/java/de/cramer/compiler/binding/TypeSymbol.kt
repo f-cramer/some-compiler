@@ -1,9 +1,5 @@
 package de.cramer.compiler.binding
 
-val builtInTypeInt = TypeSymbol("int", true)
-val builtInTypeBoolean = TypeSymbol("boolean", true)
-val builtInTypeString = TypeSymbol("string", true)
-
 val anyTypeMatcher: TypeMatcher = { true }
 
 private val builtInTypeMatchers = mutableMapOf<TypeSymbol, TypeMatcher>()
@@ -13,6 +9,12 @@ data class TypeSymbol(
     val builtin: Boolean = false,
 ) {
     override fun toString(): String = name
+
+    companion object {
+        val int = TypeSymbol("int", true)
+        val boolean = TypeSymbol("boolean", true)
+        val string = TypeSymbol("string", true)
+    }
 }
 
 typealias TypeMatcher = (TypeSymbol) -> Boolean

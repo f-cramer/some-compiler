@@ -73,25 +73,25 @@ class Binder(
     }
 
     private fun bindIfStatement(statement: IfStatement): BoundIfStatement {
-        val condition = bindExpression(statement.condition, builtInTypeBoolean)
+        val condition = bindExpression(statement.condition, TypeSymbol.boolean)
         val thenStatement = bindStatement(statement.thenStatement)
         val elseStatement = statement.elseClause?.statement?.let { bindStatement(it) }
         return BoundIfStatement(condition, thenStatement, elseStatement)
     }
 
     private fun bindWhileStatement(statement: WhileStatement): BoundWhileStatement {
-        val condition = bindExpression(statement.condition, builtInTypeBoolean)
+        val condition = bindExpression(statement.condition, TypeSymbol.boolean)
         val body = bindStatement(statement.body)
         return BoundWhileStatement(condition, body)
     }
 
     private fun bindForStatement(statement: ForStatement): BoundForStatement {
-        val lowerBound = bindExpression(statement.lowerBound, builtInTypeInt)
-        val upperBound = bindExpression(statement.upperBound, builtInTypeInt)
+        val lowerBound = bindExpression(statement.lowerBound, TypeSymbol.int)
+        val upperBound = bindExpression(statement.upperBound, TypeSymbol.int)
 
         val bodyBinder = createSubBinder()
         val name = statement.variable.text
-        val variable = VariableSymbol(name, true, builtInTypeInt)
+        val variable = VariableSymbol(name, true, TypeSymbol.int)
         if (!bodyBinder.scope.declare(variable)) {
             diagnostics.variableAlreadyDeclared(statement.variable.span, name)
         }
@@ -126,9 +126,9 @@ class Binder(
     private fun bindLiteralExpression(expression: LiteralExpression): BoundExpression {
         val value = expression.literalToken.value ?: 0
         val type = when (expression.literalToken.type) {
-            SyntaxType.StringToken -> builtInTypeString
-            SyntaxType.NumberToken -> builtInTypeInt
-            SyntaxType.TrueKeyword, SyntaxType.FalseKeyword -> builtInTypeBoolean
+            SyntaxType.StringToken -> TypeSymbol.string
+            SyntaxType.NumberToken -> TypeSymbol.int
+            SyntaxType.TrueKeyword, SyntaxType.FalseKeyword -> TypeSymbol.boolean
             else -> error("unable to get type for ${expression.literalToken.type}")
         }
         return BoundLiteralExpression(value, type)
@@ -166,13 +166,13 @@ class Binder(
         if (name.isEmpty()) {
             // This means the token was inserted by the parse. We already
             // reported an error, so we can just return an error expression.
-            return BoundLiteralExpression(0, builtInTypeInt)
+            return BoundLiteralExpression(0, TypeSymbol.int)
         }
 
         val variable = scope[name]
         if (variable == null) {
             diagnostics.undefinedName(expression.identifier, name)
-            return BoundLiteralExpression(0, builtInTypeInt)
+            return BoundLiteralExpression(0, TypeSymbol.int)
         }
 
         return BoundVariableExpression(variable)
@@ -184,7 +184,7 @@ class Binder(
 
         val variable = scope[name] ?: run {
             diagnostics.undefinedName(expression.identifier, name)
-            return BoundLiteralExpression(0, builtInTypeInt)
+            return BoundLiteralExpression(0, TypeSymbol.int)
         }
 
         if (variable.isReadOnly) {

@@ -97,7 +97,7 @@ class Lowerer private constructor() : BoundTreeRewriter() {
                 BoundBinaryExpression(
                     BoundVariableExpression(statement.variable),
                     binaryOperatorAdditionIntInt,
-                    BoundLiteralExpression(1, builtInTypeInt),
+                    BoundLiteralExpression(1, TypeSymbol.int),
                 ),
             ),
         )

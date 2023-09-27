@@ -1,11 +1,13 @@
 package de.cramer.compiler.binding
 
+import de.cramer.compiler.binding.TypeSymbol.Companion.boolean
+import de.cramer.compiler.binding.TypeSymbol.Companion.int
 import de.cramer.compiler.syntax.SyntaxType
 
-val unaryOperatorIdentityInt = BoundUnaryOperator(BoundUnaryOperatorKind.Identity, SyntaxType.PlusToken, builtInTypeInt)
-val unaryOperatorNegationInt = BoundUnaryOperator(BoundUnaryOperatorKind.Negation, SyntaxType.MinusToken, builtInTypeInt)
-val unaryOperatorLogicalNegationBoolean = BoundUnaryOperator(BoundUnaryOperatorKind.LogicalNegation, SyntaxType.BangToken, builtInTypeBoolean)
-val unaryOperatorBitwiseComplementInt = BoundUnaryOperator(BoundUnaryOperatorKind.BitwiseComplement, SyntaxType.TildeToken, builtInTypeInt)
+val unaryOperatorIdentityInt = BoundUnaryOperator(BoundUnaryOperatorKind.Identity, SyntaxType.PlusToken, int)
+val unaryOperatorNegationInt = BoundUnaryOperator(BoundUnaryOperatorKind.Negation, SyntaxType.MinusToken, int)
+val unaryOperatorLogicalNegationBoolean = BoundUnaryOperator(BoundUnaryOperatorKind.LogicalNegation, SyntaxType.BangToken, boolean)
+val unaryOperatorBitwiseComplementInt = BoundUnaryOperator(BoundUnaryOperatorKind.BitwiseComplement, SyntaxType.TildeToken, int)
 
 val builtInUnaryOperators = listOf(
     unaryOperatorIdentityInt,
