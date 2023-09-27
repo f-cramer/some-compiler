@@ -203,7 +203,7 @@ class Binder(
         fun bindGlobalScope(previous: BoundGlobalScope?, compilationUnit: CompilationUnit): BoundGlobalScope {
             val parentScope = createParentScopes(previous)
             val binder = Binder(parentScope)
-            val statement = binder.bindStatement(compilationUnit.statement)
+            val statement = Lowerer.lower(binder.bindStatement(compilationUnit.statement))
             val variables = binder.scope.declaredVariables
             val diagnostics = binder.diagnostics()
             return BoundGlobalScope(previous, diagnostics, variables, statement)
