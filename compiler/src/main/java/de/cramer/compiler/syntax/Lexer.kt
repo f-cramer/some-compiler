@@ -59,8 +59,9 @@ class Lexer(
             var escaped = false
             while (true) {
                 val next = next()
-                if (next == null) {
-                    diagnostics.unexpectedCharacter("\"", null, index - 1)
+                if (next == null || next.singleChar { it == '\n' || it == '\r' }) {
+                    val end = if (next == null) index else index - 1
+                    diagnostics.unterminatedString(TextSpan(position..<end))
                     break
                 }
 
@@ -76,7 +77,8 @@ class Lexer(
             }
         }.asCodePoints()
 
-        tokens += Token(SyntaxType.StringToken, TextSpan(position, index - position), "\"$value\"".asCodePoints(), value.toString())
+        val span = TextSpan(position..<index)
+        tokens += Token(SyntaxType.StringToken, span, text.substring(span), value.toString())
     }
 
     private fun parseWhitespace(tokens: MutableList<Token>) {
@@ -210,6 +212,11 @@ class Lexer(
 
     private fun Diagnostics.invalidInt(value: CodePointString, span: TextSpan) {
         val message = "'$value' is not a valid int"
+        this += Diagnostic(span, message)
+    }
+
+    private fun Diagnostics.unterminatedString(span: TextSpan) {
+        val message = "unterminated string literal"
         this += Diagnostic(span, message)
     }
 }

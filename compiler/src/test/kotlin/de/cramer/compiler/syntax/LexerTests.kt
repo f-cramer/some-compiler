@@ -4,7 +4,11 @@ import assertk.assertThat
 import assertk.assertions.hasSize
 import assertk.assertions.index
 import assertk.assertions.isEmpty
+import assertk.assertions.isEqualTo
+import assertk.assertions.prop
 import assertk.assertions.single
+import de.cramer.compiler.Diagnostic
+import de.cramer.compiler.text.TextSpan
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -48,6 +52,19 @@ class LexerTests {
         tokens.index(0).assert(type1, text1)
         tokens.index(1).assert(separatorType, separatorText)
         tokens.index(2).assert(type2, text2)
+    }
+
+    @Test
+    fun `lexer lexes unterminated string`() {
+        val text = "\"text"
+        val (tokens, diagnostics) = lexWithDiagnostics(text)
+
+        val token = assertThat(tokens).single()
+        token.assert(SyntaxType.StringToken, text)
+
+        val diagnostic = assertThat(diagnostics).single()
+        diagnostic.prop(Diagnostic::message).isEqualTo("unterminated string literal")
+        diagnostic.prop(Diagnostic::span).isEqualTo(TextSpan(0, 5))
     }
 
     companion object {
