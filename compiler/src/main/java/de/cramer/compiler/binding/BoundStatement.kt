@@ -11,6 +11,9 @@ enum class BoundStatementKind {
     IfStatement,
     WhileStatement,
     ForStatement,
+    LabelStatement,
+    GotoStatement,
+    ConditionalGotoStatement,
 }
 
 data class BoundBlockStatement(
@@ -60,4 +63,27 @@ data class BoundForStatement(
 ) : BoundStatement {
     override val kind: BoundStatementKind
         get() = BoundStatementKind.ForStatement
+}
+
+data class BoundLabelStatement(
+    val label: LabelSymbol,
+) : BoundStatement {
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.LabelStatement
+}
+
+data class BoundGotoStatement(
+    val label: LabelSymbol,
+) : BoundStatement {
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.GotoStatement
+}
+
+data class BoundConditionalGotoStatement(
+    val label: LabelSymbol,
+    val condition: BoundExpression,
+    val jumpIf: Boolean,
+) : BoundStatement {
+    override val kind: BoundStatementKind
+        get() = BoundStatementKind.ConditionalGotoStatement
 }

@@ -3,17 +3,18 @@ package de.cramer.compiler
 import de.cramer.compiler.binding.BoundAssignmentExpression
 import de.cramer.compiler.binding.BoundBinaryExpression
 import de.cramer.compiler.binding.BoundBlockStatement
+import de.cramer.compiler.binding.BoundConditionalGotoStatement
 import de.cramer.compiler.binding.BoundExpression
 import de.cramer.compiler.binding.BoundExpressionKind
 import de.cramer.compiler.binding.BoundExpressionStatement
-import de.cramer.compiler.binding.BoundIfStatement
+import de.cramer.compiler.binding.BoundGotoStatement
+import de.cramer.compiler.binding.BoundLabelStatement
 import de.cramer.compiler.binding.BoundLiteralExpression
-import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.binding.BoundStatementKind
 import de.cramer.compiler.binding.BoundUnaryExpression
 import de.cramer.compiler.binding.BoundVariableDeclarationStatement
 import de.cramer.compiler.binding.BoundVariableExpression
-import de.cramer.compiler.binding.BoundWhileStatement
+import de.cramer.compiler.binding.LabelSymbol
 import de.cramer.compiler.binding.binaryOperatorAdditionIntInt
 import de.cramer.compiler.binding.binaryOperatorAdditionStringString
 import de.cramer.compiler.binding.binaryOperatorBitwiseAndBooleanBoolean
@@ -37,33 +38,45 @@ import de.cramer.compiler.binding.unaryOperatorBitwiseComplementInt
 import de.cramer.compiler.binding.unaryOperatorIdentityInt
 import de.cramer.compiler.binding.unaryOperatorLogicalNegationBoolean
 import de.cramer.compiler.binding.unaryOperatorNegationInt
+import java.util.IdentityHashMap
 
 class Evaluator(
-    private val root: BoundStatement,
+    private val root: BoundBlockStatement,
     private val variables: Variables,
 ) {
     private var lastValue: Any? = null
 
     fun evaluate(): Any? {
-        evaluateStatement(root)
+        val labelToProgramIndex = IdentityHashMap<LabelSymbol, Int>()
+        for ((i, statement) in root.statements.withIndex()) {
+            if (statement is BoundLabelStatement) {
+                labelToProgramIndex[statement.label] = i
+            }
+        }
+
+        var programIndex = 0
+        while (programIndex < root.statements.size) {
+            val statement = root.statements[programIndex]
+
+            when (statement.kind) {
+                BoundStatementKind.ExpressionStatement -> evaluateExpressionStatement(statement as BoundExpressionStatement)
+                BoundStatementKind.VariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement as BoundVariableDeclarationStatement)
+                BoundStatementKind.LabelStatement -> {}
+                BoundStatementKind.GotoStatement -> programIndex = labelToProgramIndex.getValue((statement as BoundGotoStatement).label)
+                BoundStatementKind.ConditionalGotoStatement -> {
+                    statement as BoundConditionalGotoStatement
+                    if (statement.jumpIf == evaluateExpression(statement.condition)) {
+                        programIndex = labelToProgramIndex.getValue(statement.label)
+                    }
+                }
+                BoundStatementKind.BlockStatement, BoundStatementKind.IfStatement, BoundStatementKind.ForStatement, BoundStatementKind.WhileStatement ->
+                    error("not possible")
+            }
+
+            programIndex++
+        }
+
         return lastValue
-    }
-
-    private fun evaluateStatement(statement: BoundStatement) {
-        when (statement.kind) {
-            BoundStatementKind.BlockStatement -> evaluateBlockStatement(statement as BoundBlockStatement)
-            BoundStatementKind.ExpressionStatement -> evaluateExpressionStatement(statement as BoundExpressionStatement)
-            BoundStatementKind.VariableDeclarationStatement -> evaluateVariableDeclarationStatement(statement as BoundVariableDeclarationStatement)
-            BoundStatementKind.IfStatement -> evaluateIfStatement(statement as BoundIfStatement)
-            BoundStatementKind.WhileStatement -> evaluateWhileStatement(statement as BoundWhileStatement)
-            BoundStatementKind.ForStatement -> error("not possible")
-        }
-    }
-
-    private fun evaluateBlockStatement(statement: BoundBlockStatement) {
-        for (s in statement.statements) {
-            evaluateStatement(s)
-        }
     }
 
     private fun evaluateExpressionStatement(statement: BoundExpressionStatement) {
@@ -74,21 +87,6 @@ class Evaluator(
         val value = evaluateExpression(statement.initializer)
         variables[statement.variable] = value
         lastValue = value
-    }
-
-    private fun evaluateIfStatement(statement: BoundIfStatement) {
-        val condition = evaluateExpression(statement.condition) as Boolean
-        if (condition) {
-            evaluateStatement(statement.thenStatement)
-        } else if (statement.elseStatement != null) {
-            evaluateStatement(statement.elseStatement)
-        }
-    }
-
-    private fun evaluateWhileStatement(statement: BoundWhileStatement) {
-        while (evaluateExpression(statement.condition) as Boolean) {
-            evaluateStatement(statement.body)
-        }
     }
 
     private fun evaluateExpression(expression: BoundExpression): Any {

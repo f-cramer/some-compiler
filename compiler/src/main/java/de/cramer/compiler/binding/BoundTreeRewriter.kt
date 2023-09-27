@@ -10,6 +10,9 @@ abstract class BoundTreeRewriter {
             BoundStatementKind.IfStatement -> rewriteIfStatement(statement as BoundIfStatement)
             BoundStatementKind.WhileStatement -> rewriteWhileStatement(statement as BoundWhileStatement)
             BoundStatementKind.ForStatement -> rewriteForStatement(statement as BoundForStatement)
+            BoundStatementKind.LabelStatement -> rewriteLabelStatement(statement as BoundLabelStatement)
+            BoundStatementKind.GotoStatement -> rewriteGotoStatement(statement as BoundGotoStatement)
+            BoundStatementKind.ConditionalGotoStatement -> rewriteConditionalGotoStatement(statement as BoundConditionalGotoStatement)
         }
     }
 
@@ -92,6 +95,23 @@ abstract class BoundTreeRewriter {
         }
 
         return BoundForStatement(statement.variable, lowerBound, upperBound, body)
+    }
+
+    private fun rewriteLabelStatement(statement: BoundLabelStatement): BoundStatement {
+        return statement
+    }
+
+    private fun rewriteGotoStatement(statement: BoundGotoStatement): BoundStatement {
+        return statement
+    }
+
+    private fun rewriteConditionalGotoStatement(statement: BoundConditionalGotoStatement): BoundStatement {
+        val condition = rewriteExpression(statement.condition)
+        if (condition == statement.condition) {
+            return statement
+        }
+
+        return BoundConditionalGotoStatement(statement.label, condition, statement.jumpIf)
     }
 
     protected open fun rewriteExpression(expression: BoundExpression): BoundExpression {
