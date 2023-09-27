@@ -4,10 +4,13 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.Modifier
 import com.google.devtools.ksp.symbol.Variance
 
 internal val KSDeclaration.name: KSName
     get() = qualifiedName ?: simpleName
+
+internal fun KSDeclaration.isSealed() = Modifier.SEALED in modifiers
 
 internal fun KSDeclaration.isSubClassOf(superClass: String): Boolean = this !is KSClassDeclaration || superTypes
     .map { it.resolve().declaration }

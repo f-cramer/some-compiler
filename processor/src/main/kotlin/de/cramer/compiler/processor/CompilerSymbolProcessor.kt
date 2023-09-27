@@ -1,5 +1,6 @@
 package de.cramer.compiler.processor
 
+import com.google.devtools.ksp.getClassDeclarationByName
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -16,9 +17,11 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 import de.cramer.compiler.processor.extensions.isCollectionOf
+import de.cramer.compiler.processor.extensions.isSealed
 import de.cramer.compiler.processor.extensions.isSubClassOf
 import de.cramer.compiler.processor.extensions.suppressCompilerWarnings
 
@@ -27,11 +30,17 @@ private const val GET_CHILDREN_FUNCTION_NAME = "getChildren"
 private const val SYNTAX_PACKAGE = "de.cramer.compiler.syntax"
 private const val SYNTAX_NODE = "SyntaxNode"
 
+private const val BINDING_PACKAGE = "de.cramer.compiler.binding"
+private const val BOUND_NODE = "BoundNode"
+
 class CompilerSymbolProcessor(
     private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.createGetChildrenMethod(ClassName(SYNTAX_PACKAGE, SYNTAX_NODE), ClassName(SYNTAX_PACKAGE, "${SYNTAX_NODE}Children"), GET_CHILDREN_FUNCTION_NAME, EnumBasedDispatchCodeGenerator(ClassName(SYNTAX_PACKAGE, "SyntaxType"), "type"), GetChildrenInnerCodeGenerator)
+
+        resolver.createGetChildrenMethod(ClassName(BINDING_PACKAGE, BOUND_NODE), ClassName(BINDING_PACKAGE, "${BOUND_NODE}Children"), GET_CHILDREN_FUNCTION_NAME, TypeBasedDispatchCodeGenerator, GetChildrenInnerCodeGenerator)
+        resolver.createGetChildrenMethod(ClassName(BINDING_PACKAGE, BOUND_NODE), ClassName(BINDING_PACKAGE, "${BOUND_NODE}Properties"), "getProperties", TypeBasedDispatchCodeGenerator, GetPropertiesInnerCodeGenerator)
         return emptyList()
     }
 
@@ -120,6 +129,33 @@ class CompilerSymbolProcessor(
         }
     }
 
+    private object GetPropertiesInnerCodeGenerator : InnerCodeGenerator {
+        override fun getType(baseClass: ClassName): TypeName =
+            Pair::class.asClassName().parameterizedBy(String::class.asTypeName(), Any::class.asTypeName().copy(nullable = true))
+
+        override fun invoke(arguments: InnerCodeGeneratorArguments): CodeBlock {
+            val declaredProperties = arguments.clazz.getDeclaredProperties()
+            val baseType = arguments.baseType
+            val properties = declaredProperties
+                .filter { it.hasBackingField }
+                .associate { it.simpleName.asString() to it.type.resolve() }
+                .filterValues { !((it.declaration as KSClassDeclaration).isSubClassOf(baseType.canonicalName) || it.isCollectionOf(baseType.canonicalName)) }
+                .keys
+
+            val codeBuilder = CodeBlock.builder()
+
+            if (properties.isNotEmpty()) {
+                if (arguments.needsTypeCast) {
+                    codeBuilder.addStatement("this@%L as %T", arguments.functionName, arguments.clazz.toClassName())
+                }
+            }
+            properties.forEach {
+                codeBuilder.addStatement("this += %S to this@%L.%L", it, arguments.functionName, it)
+            }
+            return codeBuilder.build()
+        }
+    }
+
     private interface DispatchCodeGenerator {
         val innerCodeNeedsTypeCast: Boolean
 
@@ -133,6 +169,29 @@ class CompilerSymbolProcessor(
         val functionName: String,
         val resolver: Resolver,
     )
+
+    private object TypeBasedDispatchCodeGenerator : DispatchCodeGenerator {
+        override val innerCodeNeedsTypeCast: Boolean
+            get() = false
+
+        override fun invoke(arguments: DispatchCodeGeneratorArguments) {
+            val code = arguments.code
+            code.beginControlFlow("when (this@%L)", arguments.functionName)
+            arguments.subClasses.forEach { (it, innerBlock) ->
+                code.add("is %T -> {", it.toClassName())
+                    .addStatement("")
+                    .indent()
+                    .add(innerBlock)
+                    .unindent()
+                    .add("}")
+                    .addStatement("")
+            }
+            if (!arguments.resolver.getClassDeclarationByName(arguments.superClass.canonicalName)!!.isSealed()) {
+                code.addStatement("else -> error(%P)", "cannot get children for instance of type \${this::class.qualifiedName}")
+            }
+            code.endControlFlow()
+        }
+    }
 
     private class EnumBasedDispatchCodeGenerator(
         private val enumClassName: ClassName,
