@@ -9,5 +9,4 @@ data class ParenthesizedExpression(
     val closeParenthesisToken: Token,
 ) : ExpressionNode {
     override val type = SyntaxType.ParenthesizedExpression
-    override val children = listOf(openParenthesisToken, expression, closeParenthesisToken)
 }

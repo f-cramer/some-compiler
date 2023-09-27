@@ -9,9 +9,4 @@ data class BlockStatement(
     val closeBraceToken: Token,
 ) : StatementNode {
     override val type = SyntaxType.BlockStatement
-    override val children = listOf(
-        listOf(openBraceToken),
-        statements,
-        listOf(closeBraceToken),
-    ).flatten()
 }

@@ -10,5 +10,4 @@ data class WhileStatement(
     val body: StatementNode,
 ) : StatementNode {
     override val type = SyntaxType.WhileStatement
-    override val children = listOf(keyword, condition, body)
 }

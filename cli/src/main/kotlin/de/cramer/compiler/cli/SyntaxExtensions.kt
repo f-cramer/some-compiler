@@ -2,6 +2,7 @@ package de.cramer.compiler.cli
 
 import de.cramer.compiler.syntax.SyntaxNode
 import de.cramer.compiler.syntax.Token
+import de.cramer.compiler.syntax.getChildren
 import org.fusesource.jansi.Ansi
 import org.fusesource.jansi.Ansi.ansi
 import java.io.PrintStream
@@ -34,8 +35,9 @@ fun prettyPrint(writer: PrintStream, node: SyntaxNode, indent: String = "", isLa
     val indentMarker = if (isLast) " " else "|"
     val childrenIndent = "$indent$indentMarker   "
 
-    val lastChild = node.children.lastOrNull()
-    for (child in node.children) {
+    val children = node.getChildren()
+    val lastChild = children.lastOrNull()
+    for (child in children) {
         prettyPrint(writer, child, childrenIndent, child == lastChild)
     }
 }

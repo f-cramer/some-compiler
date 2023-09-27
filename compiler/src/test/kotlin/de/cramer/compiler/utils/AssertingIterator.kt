@@ -10,6 +10,7 @@ import de.cramer.compiler.syntax.SyntaxNode
 import de.cramer.compiler.syntax.SyntaxType
 import de.cramer.compiler.syntax.Token
 import de.cramer.compiler.syntax.assert
+import de.cramer.compiler.syntax.getChildren
 import java.util.ArrayDeque
 
 class AssertingIterator private constructor(
@@ -60,7 +61,7 @@ class AssertingIterator private constructor(
                 val n = stack.pop()
                 yield(n)
 
-                for (child in n.children.asReversed()) {
+                for (child in n.getChildren().asReversed()) {
                     stack.push(child)
                 }
             }

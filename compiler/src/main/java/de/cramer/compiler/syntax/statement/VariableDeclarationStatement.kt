@@ -11,5 +11,4 @@ data class VariableDeclarationStatement(
     val initializer: ExpressionNode,
 ) : StatementNode {
     override val type = SyntaxType.VariableDeclarationStatement
-    override val children = listOf(keyword, identifier, equalsToken, initializer)
 }

@@ -9,5 +9,4 @@ data class BinaryExpression(
     val right: ExpressionNode,
 ) : ExpressionNode {
     override val type = SyntaxType.BinaryExpression
-    override val children = listOf(left, operator, right)
 }

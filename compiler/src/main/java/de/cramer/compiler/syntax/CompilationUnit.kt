@@ -7,5 +7,4 @@ data class CompilationUnit(
     val endOfFileToken: Token,
 ) : SyntaxNode {
     override val type = SyntaxType.CompilationUnit
-    override val children = listOf(statement, endOfFileToken)
 }

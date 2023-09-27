@@ -7,5 +7,4 @@ data class ExpressionStatement(
     val expression: ExpressionNode,
 ) : StatementNode {
     override val type = SyntaxType.ExpressionStatement
-    override val children = listOf(expression)
 }

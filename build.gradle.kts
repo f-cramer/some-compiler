@@ -6,6 +6,8 @@ plugins {
 
     id("org.jlleitschuh.gradle.ktlint") version "11.6.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.1"
+
+    id("com.google.devtools.ksp")
 }
 
 group = "de.cramer"
@@ -25,6 +27,7 @@ tasks.withType<JavaExec>().configureEach {
 val kotlinPluginId = "org.jetbrains.kotlin.jvm"
 val ktlintPluginId = "org.jlleitschuh.gradle.ktlint"
 val detektPluginId = "io.gitlab.arturbosch.detekt"
+val kspPluginid = "com.google.devtools.ksp"
 
 allprojects {
     repositories {
@@ -34,6 +37,7 @@ allprojects {
     plugins.withId(kotlinPluginId) {
         apply(plugin = ktlintPluginId)
         apply(plugin = detektPluginId)
+        apply(plugin = kspPluginid)
 
         kotlin {
             jvmToolchain(configureJavaToolchain)

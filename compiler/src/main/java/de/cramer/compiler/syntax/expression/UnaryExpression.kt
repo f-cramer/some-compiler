@@ -8,5 +8,4 @@ data class UnaryExpression(
     val operand: ExpressionNode,
 ) : ExpressionNode {
     override val type = SyntaxType.UnaryExpression
-    override val children = listOf(operator, operand)
 }

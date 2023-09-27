@@ -14,5 +14,4 @@ data class ForStatement(
     val body: StatementNode,
 ) : StatementNode {
     override val type = SyntaxType.ForStatement
-    override val children = listOf(keyword, variable, equalsToken, lowerBound, toToken, upperBound, body)
 }

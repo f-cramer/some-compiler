@@ -12,7 +12,6 @@ data class IfStatement(
     val elseClause: ElseClause?,
 ) : StatementNode {
     override val type = SyntaxType.IfStatement
-    override val children = listOfNotNull(keyword, condition, thenStatement, elseClause)
 }
 
 data class ElseClause(
@@ -20,5 +19,4 @@ data class ElseClause(
     val statement: StatementNode,
 ) : SyntaxNode {
     override val type = SyntaxType.ElseClause
-    override val children = listOf(keyword, statement)
 }

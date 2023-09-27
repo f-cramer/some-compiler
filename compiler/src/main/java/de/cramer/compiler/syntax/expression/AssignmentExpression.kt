@@ -9,5 +9,4 @@ data class AssignmentExpression(
     val value: ExpressionNode,
 ) : ExpressionNode {
     override val type = SyntaxType.AssignmentExpression
-    override val children = listOf(identifier, value)
 }

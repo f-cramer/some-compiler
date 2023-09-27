@@ -7,5 +7,4 @@ data class LiteralExpression(
     val literalToken: Token,
 ) : ExpressionNode {
     override val type = SyntaxType.LiteralExpression
-    override val children = listOf(literalToken)
 }
