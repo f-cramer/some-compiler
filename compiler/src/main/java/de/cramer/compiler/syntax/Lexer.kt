@@ -88,7 +88,7 @@ class Lexer(
         }
 
         val value = text.substring(position, index)
-        tokens += Token(SyntaxType.WhitespaceToken, TextSpan(position, value.length), value, null)
+        tokens += Token(SyntaxType.WhitespaceToken, TextSpan(position..<index), value, null)
     }
 
     private fun parseNumber(tokens: MutableList<Token>) {
@@ -101,10 +101,10 @@ class Lexer(
 
         val value = text.substring(position, index)
         val numberValue = runCatching { value.toString().toInt() }.getOrElse {
-            diagnostics.invalidInt(value, TextSpan(position, value.length))
+            diagnostics.invalidInt(value, TextSpan(position..<index))
             0
         }
-        tokens += Token(SyntaxType.NumberToken, TextSpan(position, value.length), value, numberValue)
+        tokens += Token(SyntaxType.NumberToken, TextSpan(position..<index), value, numberValue)
     }
 
     private fun parseIdentifier(tokens: MutableList<Token>) {
@@ -128,7 +128,7 @@ class Lexer(
             "to" -> SyntaxType.ToKeyword to null
             else -> SyntaxType.IdentifierToken to value
         }
-        tokens += Token(type, TextSpan(position, index - position), value, tokenValue)
+        tokens += Token(type, TextSpan(position..<index), value, tokenValue)
     }
 
     private fun parseOperator(tokens: MutableList<Token>) {
