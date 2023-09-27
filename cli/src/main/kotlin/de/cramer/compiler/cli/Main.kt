@@ -12,22 +12,23 @@ import org.fusesource.jansi.Ansi.ansi
 import org.fusesource.jansi.AnsiConsole
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
+import java.nio.charset.UnsupportedCharsetException
 import kotlin.system.exitProcess
 
-fun main() {
+fun main(args: Array<String>) {
     System.setProperty(AnsiConsole.JANSI_MODE, AnsiConsole.JANSI_MODE_FORCE)
     AnsiConsole.systemInstall()
 
     try {
-        acceptInputs()
+        val configuration = Configuration(args)
+        acceptInputs(configuration)
     } finally {
         AnsiConsole.systemUninstall()
     }
 }
 
 @Suppress("NestedBlockDepth")
-private fun acceptInputs() {
-    val configuration = Configuration()
+private fun acceptInputs(configuration: Configuration) {
     val variables = Variables()
     val inputBuilder = StringBuilder()
 
@@ -168,4 +169,19 @@ data class Configuration(
     var showTree: Boolean = false,
     var charset: Charset = StandardCharsets.UTF_8,
     var previousCompilation: Compilation? = null,
-)
+) {
+    constructor(args: Array<String>) : this("--showProgram" in args, "--showTree" in args) {
+        val charsetArg = "--charset"
+        args.lastOrNull { it.startsWith("$charsetArg=") }
+            ?.substring(charsetArg.length + 1)
+            ?.takeUnless { it.isBlank() }
+            ?.let {
+                try {
+                    charset = Charset.forName(it)
+                } catch (@Suppress("SwallowedException") e: UnsupportedCharsetException) {
+                    println(ansi().error("Charset '$it' is not supported"))
+                    exitProcess(1)
+                }
+            }
+    }
+}
