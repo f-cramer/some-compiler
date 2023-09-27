@@ -11,7 +11,7 @@ fun SyntaxNode.writeTo(writer: PrintStream) {
     prettyPrint(writer, this)
 }
 
-fun prettyPrint(writer: PrintStream, node: SyntaxNode, indent: String = "", isLast: Boolean = true) {
+private fun prettyPrint(writer: PrintStream, node: SyntaxNode, indent: String = "", isLast: Boolean = true) {
     val writeToSystemOut = writer == System.out
     fun PrintStream.print(text: Any, ansiConfiguration: Ansi.() -> Unit) {
         if (writeToSystemOut) {
