@@ -124,7 +124,7 @@ class Binder(
         bindExpression(expression.expression)
 
     private fun bindLiteralExpression(expression: LiteralExpression): BoundExpression {
-        val value = expression.literalToken.value ?: 0
+        val value = expression.literalToken.value!!
         val type = when (expression.literalToken.type) {
             SyntaxType.StringToken -> TypeSymbol.string
             SyntaxType.NumberToken -> TypeSymbol.int
