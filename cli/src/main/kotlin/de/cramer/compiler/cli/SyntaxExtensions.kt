@@ -28,7 +28,7 @@ fun prettyPrint(writer: PrintStream, node: SyntaxNode, indent: String = "", isLa
     writer.print(node.type) { if (node is Token) fgBlue() else fgCyan() }
 
     if (node is Token) {
-        node.value?.let { writer.print(" $it") }
+        node.text.toString().takeUnless { it.isBlank() }?.let { writer.print(" $it") }
     }
     writer.println()
 
