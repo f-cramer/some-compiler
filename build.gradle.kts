@@ -78,10 +78,11 @@ allprojects {
 subprojects {
     plugins.withId(kotlinPluginId) {
         dependencies {
-            val junitVersion = "5.10.0"
-            testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-            testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-            testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+            testImplementation(platform("org.junit:junit-bom:5.10.0"))
+            testImplementation("org.junit.jupiter:junit-jupiter-api")
+            testImplementation("org.junit.jupiter:junit-jupiter-params")
+            testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+            testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
             testImplementation("com.willowtreeapps.assertk:assertk:0.27.0")
         }
     }
