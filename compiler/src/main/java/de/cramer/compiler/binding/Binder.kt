@@ -102,7 +102,7 @@ class Binder(
 
     private fun bindExpression(expression: ExpressionNode, targetType: TypeSymbol): BoundExpression {
         val result = bindExpression(expression)
-        if (result.type != targetType) {
+        if (result.type != targetType && result.type != TypeSymbol.error && targetType != TypeSymbol.error) {
             diagnostics.cannotConvert(expression.span, result.type, targetType)
         }
         return result
@@ -139,7 +139,7 @@ class Binder(
         val boundOperator = bindUnaryOperator(expression.operator.type, boundOperand.type)
         if (boundOperator == null) {
             diagnostics.unknownUnaryOperator(expression.operator, boundOperand.type)
-            return boundOperand
+            return BoundErrorExpression
         }
         return BoundUnaryExpression(boundOperator, boundOperand)
     }
@@ -150,10 +150,14 @@ class Binder(
     private fun bindBinaryExpression(expression: BinaryExpression): BoundExpression {
         val boundLeftExpression = bindExpression(expression.left)
         val boundRightExpression = bindExpression(expression.right)
+        if (boundLeftExpression.type == TypeSymbol.error || boundRightExpression.type == TypeSymbol.error) {
+            return BoundErrorExpression
+        }
+
         val boundOperator = bindBinaryOperator(expression.operator.type, boundLeftExpression.type, boundRightExpression.type)
         if (boundOperator == null) {
             diagnostics.unknownBinaryOperator(expression.operator, boundLeftExpression.type, boundRightExpression.type)
-            return boundLeftExpression
+            return BoundErrorExpression
         }
         return BoundBinaryExpression(boundLeftExpression, boundOperator, boundRightExpression)
     }
@@ -166,13 +170,13 @@ class Binder(
         if (name.isEmpty()) {
             // This means the token was inserted by the parse. We already
             // reported an error, so we can just return an error expression.
-            return BoundLiteralExpression(0, TypeSymbol.int)
+            return BoundErrorExpression
         }
 
         val variable = scope[name]
         if (variable == null) {
             diagnostics.undefinedName(expression.identifier, name)
-            return BoundLiteralExpression(0, TypeSymbol.int)
+            return BoundErrorExpression
         }
 
         return BoundVariableExpression(variable)
@@ -184,7 +188,7 @@ class Binder(
 
         val variable = scope[name] ?: run {
             diagnostics.undefinedName(expression.identifier, name)
-            return BoundLiteralExpression(0, TypeSymbol.int)
+            return BoundErrorExpression
         }
 
         if (variable.isReadOnly) {

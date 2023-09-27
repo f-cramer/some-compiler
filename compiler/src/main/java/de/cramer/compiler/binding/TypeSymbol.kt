@@ -14,6 +14,7 @@ data class TypeSymbol(
         val int = TypeSymbol("int", true)
         val boolean = TypeSymbol("boolean", true)
         val string = TypeSymbol("string", true)
+        val error = TypeSymbol("?", true)
     }
 }
 

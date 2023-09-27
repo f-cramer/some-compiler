@@ -121,6 +121,7 @@ abstract class BoundTreeRewriter {
             BoundExpressionKind.BinaryExpression -> rewriteBinaryExpression(expression as BoundBinaryExpression)
             BoundExpressionKind.VariableExpression -> rewriteVariableExpression(expression as BoundVariableExpression)
             BoundExpressionKind.AssignmentExpression -> rewriteAssignmentExpression(expression as BoundAssignmentExpression)
+            BoundExpressionKind.ErrorExpression -> rewriteErrorExpression(expression as BoundErrorExpression)
         }
     }
 
@@ -161,5 +162,9 @@ abstract class BoundTreeRewriter {
         }
 
         return BoundAssignmentExpression(expression.variable, exp)
+    }
+
+    protected open fun rewriteErrorExpression(expression: BoundErrorExpression): BoundExpression {
+        return expression
     }
 }

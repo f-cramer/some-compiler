@@ -96,6 +96,7 @@ class Evaluator(
             BoundExpressionKind.BinaryExpression -> evaluateBinaryExpression(expression as BoundBinaryExpression)
             BoundExpressionKind.VariableExpression -> evaluateVariableExpression(expression as BoundVariableExpression)
             BoundExpressionKind.AssignmentExpression -> evaluateAssignmentExpression(expression as BoundAssignmentExpression)
+            BoundExpressionKind.ErrorExpression -> error("not possible")
         }
     }
 

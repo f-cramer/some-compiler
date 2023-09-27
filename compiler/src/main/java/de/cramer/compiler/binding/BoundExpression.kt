@@ -11,6 +11,7 @@ enum class BoundExpressionKind {
     BinaryExpression,
     VariableExpression,
     AssignmentExpression,
+    ErrorExpression,
 }
 
 data class BoundLiteralExpression(
@@ -59,4 +60,11 @@ data class BoundAssignmentExpression(
         get() = BoundExpressionKind.AssignmentExpression
     override val type: TypeSymbol
         get() = variable.type
+}
+
+data object BoundErrorExpression : BoundExpression {
+    override val type: TypeSymbol
+        get() = TypeSymbol.error
+    override val kind: BoundExpressionKind
+        get() = BoundExpressionKind.ErrorExpression
 }
