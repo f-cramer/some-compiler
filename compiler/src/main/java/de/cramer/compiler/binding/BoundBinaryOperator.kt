@@ -1,6 +1,7 @@
 package de.cramer.compiler.binding
 
 import de.cramer.compiler.syntax.SyntaxType
+import de.cramer.compiler.syntax.getText
 
 val binaryOperatorAdditionIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Addition, SyntaxType.PlusToken, builtInTypeInt)
 val binaryOperatorSubtractionIntInt = BoundBinaryOperator(BoundBinaryOperatorKind.Subtraction, SyntaxType.MinusToken, builtInTypeInt)
@@ -61,6 +62,8 @@ data class BoundBinaryOperator(
 
     constructor(kind: BoundBinaryOperatorKind, tokenType: SyntaxType, operandType: Type, type: Type) :
         this(kind, tokenType, TypeMatcher(operandType), TypeMatcher(operandType), type)
+
+    override fun toString(): String = tokenType.getText() ?: ""
 }
 
 enum class BoundBinaryOperatorKind {

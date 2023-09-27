@@ -11,7 +11,9 @@ private val builtInTypeMatchers = mutableMapOf<Type, TypeMatcher>()
 data class Type(
     val name: String,
     val builtin: Boolean = false,
-)
+) {
+    override fun toString(): String = name
+}
 
 typealias TypeMatcher = (Type) -> Boolean
 

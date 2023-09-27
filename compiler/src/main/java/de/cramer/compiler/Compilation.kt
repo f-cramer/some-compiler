@@ -2,6 +2,7 @@ package de.cramer.compiler
 
 import de.cramer.compiler.binding.Binder
 import de.cramer.compiler.binding.BoundGlobalScope
+import de.cramer.compiler.binding.BoundStatement
 import de.cramer.compiler.syntax.SyntaxTree
 
 data class Compilation(
@@ -13,6 +14,8 @@ data class Compilation(
     private val globalScope: BoundGlobalScope by lazy {
         Binder.bindGlobalScope(previous?.globalScope, syntaxTree.root)
     }
+
+    fun getRoot(): BoundStatement = globalScope.statement
 
     fun evaluate(variables: Variables): EvaluationResult {
         val diagnostics = syntaxTree.diagnostics + globalScope.diagnostics

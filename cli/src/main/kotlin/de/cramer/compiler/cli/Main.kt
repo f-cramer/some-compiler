@@ -64,6 +64,10 @@ private fun acceptInputs() {
             }
 
             val compilation = Compilation(configuration.previousCompilation, syntaxTree)
+            if (configuration.showProgram) {
+                compilation.getRoot().writeTo(System.out)
+            }
+
             when (val evaluationResult = compilation.evaluate(variables)) {
                 is EvaluationResult.Success -> {
                     evaluationResult.value?.let { println(ansi().fgMagenta().a(it).reset()) }
@@ -86,6 +90,7 @@ fun runBuiltinFunction(function: String, configuration: Configuration) {
         "cls", "clear" -> runBuiltinFunctionClear()
         "exit", "q", "quit" -> runBuiltinFunctionExit()
         "reset" -> runBuiltinFunctionReset(configuration)
+        "showProgram" -> runBuiltinFunctionShowProgram(configuration)
         "showTree" -> runBuiltinFunctionShowTree(configuration)
         else -> println(ansi().error("unknown builtin function \"$function\""))
     }
@@ -102,6 +107,15 @@ private fun runBuiltinFunctionExit() {
 fun runBuiltinFunctionReset(configuration: Configuration) {
     configuration.previousCompilation = null
     println("scope was reset")
+}
+
+private fun runBuiltinFunctionShowProgram(configuration: Configuration) {
+    configuration.showProgram = !configuration.showProgram
+    if (configuration.showProgram) {
+        println("showing bound tree")
+    } else {
+        println("not showing bound tree")
+    }
 }
 
 private fun runBuiltinFunctionShowTree(configuration: Configuration) {
@@ -150,6 +164,7 @@ fun Ansi.startError(): Ansi = fgRed()
 fun Ansi.error(error: String?): Ansi = startError().a(error).reset()
 
 data class Configuration(
+    var showProgram: Boolean = false,
     var showTree: Boolean = false,
     var charset: Charset = StandardCharsets.UTF_8,
     var previousCompilation: Compilation? = null,
