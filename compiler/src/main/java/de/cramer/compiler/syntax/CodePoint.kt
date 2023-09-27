@@ -23,3 +23,5 @@ value class CodePoint(
 }
 
 fun CodePoint?.isEqualTo(char: Char): Boolean = this != null && this.isEqualTo(char)
+
+fun Char.asCodePoint(): CodePoint = CodePoint(code)

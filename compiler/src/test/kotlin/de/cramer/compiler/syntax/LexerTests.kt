@@ -67,6 +67,31 @@ class LexerTests {
         diagnostic.prop(Diagnostic::span).isEqualTo(TextSpan(0, 5))
     }
 
+    @ParameterizedTest
+    @MethodSource("getValidEscapeSequences")
+    fun `lexer lexes valid escape sequences`(input: Char, output: Char) {
+        val text = "\"\\$input\""
+        val tokens = lex(text)
+
+        val token = assertThat(tokens).single()
+        token.assert(SyntaxType.StringToken, text)
+        token.prop(Token::value).isEqualTo(output.toString())
+    }
+
+    @ParameterizedTest
+    @MethodSource("getInvalidEscapeSequences")
+    fun `lexer lexes invalid escape sequences`(input: Char) {
+        val text = "\"\\$input\""
+        val (tokens, diagnostics) = lexWithDiagnostics(text)
+
+        val token = assertThat(tokens).single()
+        token.assert(SyntaxType.StringToken, text)
+
+        val diagnostic = assertThat(diagnostics).single()
+        diagnostic.prop(Diagnostic::message).isEqualTo("invalid escape sequence '\\$input'")
+        diagnostic.prop(Diagnostic::span).isEqualTo(TextSpan(1, 2))
+    }
+
     companion object {
         @JvmStatic
         @Suppress("UnusedPrivateMember")
@@ -147,5 +172,23 @@ class LexerTests {
             val type: SyntaxType,
             val text: String,
         )
+
+        private val validEscapeCharacters = mapOf('n' to '\n', 'r' to '\r', 't' to '\t', '"' to '"', '\\' to '\\')
+        private val invalidEscapeCharacters: CharArray = (0..255).asSequence()
+            .map { it.toChar() }
+            .filterNot { it in validEscapeCharacters }
+            .filterNot { it == '\n' || it == '\r' }
+            .toList()
+            .toCharArray()
+
+        @JvmStatic
+        @Suppress("UnusedPrivateMember")
+        private fun getValidEscapeSequences() = validEscapeCharacters.map { (input, output) ->
+            Arguments.of(input, output)
+        }
+
+        @JvmStatic
+        @Suppress("UnusedPrivateMember")
+        private fun getInvalidEscapeSequences() = invalidEscapeCharacters.toList()
     }
 }

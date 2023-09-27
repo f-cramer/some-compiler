@@ -66,7 +66,13 @@ class Lexer(
                 }
 
                 if (escaped) {
-                    this += next
+                    val escapedChar = next.singleOrNull()?.getEscapedChar()
+                    if (escapedChar == null) {
+                        diagnostics.invalidEscapeSequence(next, TextSpan(index - 2, 2))
+                    } else {
+                        this += escapedChar.asCodePoint()
+                    }
+                    escaped = false
                 } else {
                     when (next.singleOrNull()) {
                         '\\' -> escaped = true
@@ -79,6 +85,15 @@ class Lexer(
 
         val span = TextSpan(position..<index)
         tokens += Token(SyntaxType.StringToken, span, text.substring(span), value.toString())
+    }
+
+    private fun Char.getEscapedChar() = when (this) {
+        '"' -> '"'
+        '\\' -> '\\'
+        't' -> '\t'
+        'n' -> '\n'
+        'r' -> '\r'
+        else -> null
     }
 
     private fun parseWhitespace(tokens: MutableList<Token>) {
@@ -217,6 +232,11 @@ class Lexer(
 
     private fun Diagnostics.unterminatedString(span: TextSpan) {
         val message = "unterminated string literal"
+        this += Diagnostic(span, message)
+    }
+
+    private fun Diagnostics.invalidEscapeSequence(codePoint: CodePoint, span: TextSpan) {
+        val message = "invalid escape sequence '\\$codePoint'"
         this += Diagnostic(span, message)
     }
 }
