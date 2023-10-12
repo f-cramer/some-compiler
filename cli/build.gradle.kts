@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler"))
-    implementation("org.fusesource.jansi:jansi:2.4.0")
+    implementation("org.fusesource.jansi:jansi:2.4.1")
 }
 
 application {
