@@ -87,7 +87,7 @@ subprojects {
             testImplementation("org.junit.jupiter:junit-jupiter-params")
             testRuntimeOnly("org.junit.platform:junit-platform-launcher")
             testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-            testImplementation("com.willowtreeapps.assertk:assertk:0.27.0")
+            testImplementation("com.willowtreeapps.assertk:assertk:0.28.0")
         }
     }
 }
