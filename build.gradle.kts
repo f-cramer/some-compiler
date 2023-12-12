@@ -4,7 +4,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 plugins {
     kotlin("jvm")
 
-    id("org.jlleitschuh.gradle.ktlint") version "12.0.2"
+    id("org.jlleitschuh.gradle.ktlint") version "12.0.3"
     id("io.gitlab.arturbosch.detekt") version "1.23.4"
 
     id("com.google.devtools.ksp")
