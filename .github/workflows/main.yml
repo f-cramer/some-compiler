@@ -36,7 +36,7 @@ jobs:
         with:
           report-path: '**/ktlint*.xml'
       - name: Save detekt reports
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always() # always run even if the previous step fails
         with:
           sarif_file: build/reports/detekt
