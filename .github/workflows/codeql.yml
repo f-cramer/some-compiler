@@ -44,7 +44,7 @@ jobs:
           distribution: 'oracle'
 
       - name: Build with Gradle
-        uses: gradle/actions/setup-gradle@v3.5.0
+        uses: gradle/actions/setup-gradle@v4.2.1
         with:
           arguments: assemble
 
