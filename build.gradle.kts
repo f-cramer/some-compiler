@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
-    id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
 
     id("com.google.devtools.ksp")
 }
