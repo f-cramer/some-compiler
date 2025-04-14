@@ -82,7 +82,7 @@ allprojects {
 subprojects {
     plugins.withId(kotlinPluginId) {
         dependencies {
-            testImplementation(platform("org.junit:junit-bom:5.12.0"))
+            testImplementation(platform("org.junit:junit-bom:5.12.2"))
             testImplementation("org.junit.jupiter:junit-jupiter-api")
             testImplementation("org.junit.jupiter:junit-jupiter-params")
             testRuntimeOnly("org.junit.platform:junit-platform-launcher")
