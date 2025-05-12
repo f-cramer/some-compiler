@@ -29,7 +29,7 @@ jobs:
       - name: Test with Gradle
         run: ./gradlew check --continue
       - name: Save ktlint reports
-        uses: yutailang0119/action-ktlint@v4
+        uses: yutailang0119/action-ktlint@v5
         if: always() # always run even if the previous step fails
         with:
           report-path: '**/ktlint*.xml'
