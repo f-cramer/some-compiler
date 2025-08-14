@@ -33,11 +33,30 @@ jobs:
         if: always() # always run even if the previous step fails
         with:
           report-path: '**/ktlint*.xml'
-      - name: Save detekt reports
+      - name: Save detekt cli report
         uses: github/codeql-action/upload-sarif@v3
         if: always() # always run even if the previous step fails
         with:
-          sarif_file: build/reports/detekt
+          sarif_file: build/reports/detekt/.cli.sarif
+          category: "detekt-cli"
+      - name: Save detekt compiler report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # always run even if the previous step fails
+        with:
+          sarif_file: build/reports/detekt/.compiler.sarif
+          category: "detekt-compiler"
+      - name: Save detekt processor report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # always run even if the previous step fails
+        with:
+          sarif_file: build/reports/detekt/.processor.sarif
+          category: "detekt-processor"
+      - name: Save detekt processor-api report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # always run even if the previous step fails
+        with:
+          sarif_file: build/reports/detekt/.processor-api.sarif
+          category: "detekt-processor-apiy"
       - name: Publish JUnit Test Report
         uses: mikepenz/action-junit-report@v5
         if: always() # always run even if the previous step fails
